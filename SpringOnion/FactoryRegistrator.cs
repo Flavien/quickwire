@@ -8,13 +8,13 @@ using System.Reflection;
 
 namespace SpringOnion
 {
-    public static class BeanRegistrator
+    public static class FactoryRegistrator
     {
         public static IEnumerable<ServiceDescriptor> GetServiceDescriptors(Type type, string environmentName)
         {
             if (EnvironmentSelectorAttribute.IsEnabled(type.GetCustomAttribute<EnvironmentSelectorAttribute>(), environmentName))
             {
-                return ScanBeans(type, environmentName);
+                return ScanFactoryMethods(type, environmentName);
             }
             else
             {
@@ -22,13 +22,13 @@ namespace SpringOnion
             }
         }
 
-        private static IEnumerable<ServiceDescriptor> ScanBeans(Type type, string environmentName)
+        private static IEnumerable<ServiceDescriptor> ScanFactoryMethods(Type type, string environmentName)
         {
             foreach (MethodInfo method in type.GetMethods(BindingFlags.Static | BindingFlags.Public))
             {
                 if (EnvironmentSelectorAttribute.IsEnabled(method.GetCustomAttribute<EnvironmentSelectorAttribute>(), environmentName))
                 {
-                    foreach (RegisterBeanAttribute registerAttribute in method.GetCustomAttributes<RegisterBeanAttribute>())
+                    foreach (RegisterFactoryAttribute registerAttribute in method.GetCustomAttributes<RegisterFactoryAttribute>())
                     {
                         Type serviceType = registerAttribute.ServiceType ?? type;
 
@@ -38,7 +38,7 @@ namespace SpringOnion
             }
         }
 
-        private static Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
+        public static Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
         {
             ParameterInfo[]? parameters = methodInfo.GetParameters();
             DependencyResolverAttribute?[] dependencyResolvers = new DependencyResolverAttribute[parameters.Length];

@@ -4,9 +4,9 @@ using System;
 namespace SpringOnion.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-    public class RegisterBeanAttribute : Attribute
+    public class RegisterFactoryAttribute : Attribute
     {
-        public RegisterBeanAttribute(ServiceLifetime scope)
+        public RegisterFactoryAttribute(ServiceLifetime scope)
         {
             Scope = scope;
         }

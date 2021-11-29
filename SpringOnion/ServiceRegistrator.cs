@@ -20,7 +20,7 @@ namespace SpringOnion
             }
         }
 
-        private static Func<IServiceProvider, object> GetFactory(Type type)
+        public static Func<IServiceProvider, object> GetFactory(Type type)
         {
             ConstructorInfo constructor = type.GetConstructors()[0];
             ParameterInfo[]? parameters = constructor.GetParameters();
@@ -33,12 +33,12 @@ namespace SpringOnion
 
             List<SetterInfo> setters = new List<SetterInfo>();
 
-            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Instance))
+            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 DependencyResolverAttribute? dependencyResolver = property.GetCustomAttribute<DependencyResolverAttribute>();
-                MethodInfo? setter = property.GetSetMethod();
+                MethodInfo? setter = property.SetMethod;
 
-                if (dependencyResolver != null && setter != null && setter.IsPublic)
+                if (dependencyResolver != null && setter != null)
                 {
                     setters.Add(new SetterInfo(property.PropertyType, setter, dependencyResolver));
                 }

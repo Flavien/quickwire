@@ -38,7 +38,7 @@ namespace SpringOnion
 
             foreach (Type type in assembly.GetExportedTypes())
             {
-                foreach (ServiceDescriptor serviceDescriptor in BeanRegistrator.GetServiceDescriptors(type, environmentName))
+                foreach (ServiceDescriptor serviceDescriptor in FactoryRegistrator.GetServiceDescriptors(type, environmentName))
                 {
                     services.Add(serviceDescriptor);
                 }
