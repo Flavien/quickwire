@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace SpringOnion.Attributes

@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SpringOnion.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using Microsoft.Extensions.DependencyInjection;
+using SpringOnion.Attributes;
 
 namespace SpringOnion
 {
@@ -31,6 +33,8 @@ namespace SpringOnion
                 dependencyResolvers[i] = parameters[i].GetCustomAttribute<DependencyResolverAttribute>();
             }
 
+            bool injectAllInitOnlyProperties = type.GetCustomAttribute<InjectAllInitOnlyPropertiesAttribute>() != null;
+
             List<SetterInfo> setters = new List<SetterInfo>();
 
             foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
@@ -38,9 +42,12 @@ namespace SpringOnion
                 DependencyResolverAttribute? dependencyResolver = property.GetCustomAttribute<DependencyResolverAttribute>();
                 MethodInfo? setter = property.SetMethod;
 
-                if (dependencyResolver != null && setter != null)
+                if (setter != null)
                 {
-                    setters.Add(new SetterInfo(property.PropertyType, setter, dependencyResolver));
+                    bool isInitOnly = setter.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
+
+                    if (dependencyResolver != null || (injectAllInitOnlyProperties && isInitOnly))
+                        setters.Add(new SetterInfo(property.PropertyType, setter, dependencyResolver));
                 }
             }
 
@@ -72,6 +79,6 @@ namespace SpringOnion
             };
         }
 
-        private record SetterInfo(Type ServiceType, MethodInfo Setter, DependencyResolverAttribute DependencyResolver);
+        private record SetterInfo(Type ServiceType, MethodInfo Setter, DependencyResolverAttribute? DependencyResolver);
     }
 }

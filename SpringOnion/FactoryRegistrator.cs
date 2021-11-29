@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using SpringOnion.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using SpringOnion.Attributes;
 
 namespace SpringOnion
 {
@@ -13,13 +12,9 @@ namespace SpringOnion
         public static IEnumerable<ServiceDescriptor> GetServiceDescriptors(Type type, string environmentName)
         {
             if (EnvironmentSelectorAttribute.IsEnabled(type.GetCustomAttribute<EnvironmentSelectorAttribute>(), environmentName))
-            {
                 return ScanFactoryMethods(type, environmentName);
-            }
             else
-            {
                 return Enumerable.Empty<ServiceDescriptor>();
-            }
         }
 
         private static IEnumerable<ServiceDescriptor> ScanFactoryMethods(Type type, string environmentName)
