@@ -24,7 +24,24 @@ namespace Quickwire
 
         public static Func<IServiceProvider, object> GetFactory(Type type)
         {
-            ConstructorInfo constructor = type.GetConstructors()[0];
+            ConstructorInfo[] constructors = type.GetConstructors();
+            ConstructorInfo constructor;
+            if (constructors.Length == 1)
+            {
+                constructor = constructors[0];
+            }
+            else
+            {
+                List<ConstructorInfo> primaryConstructor = constructors
+                    .Where(constructor => constructor.IsDefined(typeof(ServiceConstructorAttribute), true))
+                    .ToList();
+
+                if (primaryConstructor.Count != 1)
+                    throw new ArgumentException();
+                else
+                    constructor = primaryConstructor[0];
+            }
+
             ParameterInfo[]? parameters = constructor.GetParameters();
             DependencyResolverAttribute?[] dependencyResolvers = new DependencyResolverAttribute[parameters.Length];
 
@@ -33,7 +50,7 @@ namespace Quickwire
                 dependencyResolvers[i] = parameters[i].GetCustomAttribute<DependencyResolverAttribute>();
             }
 
-            bool injectAllInitOnlyProperties = type.GetCustomAttribute<InjectAllInitOnlyPropertiesAttribute>() != null;
+            bool injectAllInitOnlyProperties = type.IsDefined(typeof(InjectAllInitOnlyPropertiesAttribute), true);
 
             List<SetterInfo> setters = new List<SetterInfo>();
 
