@@ -1,4 +1,4 @@
-﻿namespace SpringOnion
+﻿namespace Quickwire
 {
     public enum ServiceDescriptorMergeStrategy
     {

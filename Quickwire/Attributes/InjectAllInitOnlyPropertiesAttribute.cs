@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SpringOnion.Attributes
+namespace Quickwire.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class InjectAllInitOnlyPropertiesAttribute : Attribute

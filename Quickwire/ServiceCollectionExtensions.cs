@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
-namespace SpringOnion
+namespace Quickwire
 {
-    public static class SpringOnionExtensions
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection ScanAssembly(
             this IServiceCollection services,

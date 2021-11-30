@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace SpringOnion.Attributes
+namespace Quickwire.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class EnvironmentSelectorAttribute : Attribute

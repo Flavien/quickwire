@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using SpringOnion.Attributes;
+using Quickwire.Attributes;
 
-namespace SpringOnion
+namespace Quickwire
 {
     public static class FactoryRegistrator
     {
