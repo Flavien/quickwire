@@ -20,14 +20,10 @@ namespace SpringOnion.Attributes
             {
                 bool enabled = true;
                 if (attribute.Enabled != null)
-                {
                     enabled &= attribute.Enabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
-                }
 
                 if (attribute.Disabled != null)
-                {
                     enabled &= !attribute.Disabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
-                }
 
                 return enabled;
             }

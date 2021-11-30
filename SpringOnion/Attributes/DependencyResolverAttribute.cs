@@ -11,13 +11,9 @@ namespace SpringOnion.Attributes
         public static object Resolve(IServiceProvider serviceProvider, Type serviceType, DependencyResolverAttribute? dependencyResolver)
         {
             if (dependencyResolver == null)
-            {
                 return serviceProvider.GetRequiredService(serviceType);
-            }
             else
-            {
                 return dependencyResolver.Resolve(serviceProvider, serviceType);
-            }
         }
     }
 }
