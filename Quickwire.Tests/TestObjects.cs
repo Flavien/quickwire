@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Quickwire.Attributes;
 
 namespace Quickwire.Tests
@@ -43,6 +44,38 @@ namespace Quickwire.Tests
             public string Dependency2 { get; }
         }
 
+        public class PrivateConstructor
+        {
+            private PrivateConstructor()
+            { }
+        }
+
+        public class NoConstructorSelector
+        {
+            public NoConstructorSelector()
+            { }
+
+            public NoConstructorSelector(Dependency dependency)
+            { }
+        }
+
+        public class MoreThanOneConstructorSelector
+        {
+            [ServiceConstructor]
+            public MoreThanOneConstructorSelector()
+            { }
+
+            [ServiceConstructor]
+            public MoreThanOneConstructorSelector(Dependency dependency)
+            { }
+        }
+
+        public class UnresolvableConstructorInjection
+        {
+            public UnresolvableConstructorInjection(StringComparer dependency)
+            { }
+        }
+
         public class NoSetterInjection
         {
             public Dependency DependencyGet { get; }
@@ -66,6 +99,35 @@ namespace Quickwire.Tests
             public Dependency DependencyGetSet { get; set; }
 
             public Dependency DependencyGetInit { get; init; }
+        }
+
+        public class NonPublicSetter
+        {
+            [InjectService]
+            private Dependency DependencyGetSet1 { get; set; }
+
+            [InjectService]
+            public Dependency DependencyGetSet2 { get; private set; }
+
+            [InjectService]
+            public Dependency DependencyGetSet3 { get; protected set; }
+
+            [InjectService]
+            public Dependency DependencyGetSet4 { get; internal set; }
+
+            public Dependency GetDependencyGetSet1() => DependencyGetSet1;
+        }
+
+        public class UnresolvableSetterInjection
+        {
+            [InjectService]
+            public StringComparer DependencyGetSet { get; set; }
+        }
+
+        [InjectAllInitOnlyProperties]
+        public class UnresolvableInitOnlySetterInjection
+        {
+            public StringComparer DependencyGetInit { get; init; }
         }
     }
 }

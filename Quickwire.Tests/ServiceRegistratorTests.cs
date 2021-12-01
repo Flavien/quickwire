@@ -55,6 +55,34 @@ namespace Quickwire.Tests
         }
 
         [Fact]
+        public void GetFactory_PrivateConstructor()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                ServiceRegistrator.GetFactory(typeof(TestObjects.PrivateConstructor))(_serviceProvider));
+        }
+
+        [Fact]
+        public void GetFactory_NoConstructorSelector()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                ServiceRegistrator.GetFactory(typeof(TestObjects.NoConstructorSelector))(_serviceProvider));
+        }
+
+        [Fact]
+        public void GetFactory_MoreThanOneConstructorSelector()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                ServiceRegistrator.GetFactory(typeof(TestObjects.NoConstructorSelector))(_serviceProvider));
+        }
+
+        [Fact]
+        public void GetFactory_UnresolvableConstructorInjection()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                ServiceRegistrator.GetFactory(typeof(TestObjects.UnresolvableConstructorInjection))(_serviceProvider));
+        }
+
+        [Fact]
         public void GetFactory_NoSetterInjection()
         {
             object resultObject = ServiceRegistrator.GetFactory(typeof(TestObjects.NoSetterInjection))(_serviceProvider);
@@ -86,6 +114,33 @@ namespace Quickwire.Tests
             Assert.Null(result.DependencyGet);
             Assert.Null(result.DependencyGetSet);
             Assert.Equal(_dependency, result.DependencyGetInit);
+        }
+
+        [Fact]
+        public void GetFactory_NonPublicSetter()
+        {
+            object resultObject = ServiceRegistrator.GetFactory(typeof(TestObjects.NonPublicSetter))(_serviceProvider);
+            TestObjects.NonPublicSetter result = resultObject as TestObjects.NonPublicSetter;
+
+            Assert.NotNull(result);
+            Assert.Equal(_dependency, result.GetDependencyGetSet1());
+            Assert.Equal(_dependency, result.DependencyGetSet2);
+            Assert.Equal(_dependency, result.DependencyGetSet3);
+            Assert.Equal(_dependency, result.DependencyGetSet4);
+        }
+
+        [Fact]
+        public void GetFactory_UnresolvableSetterInjection()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                ServiceRegistrator.GetFactory(typeof(TestObjects.UnresolvableSetterInjection))(_serviceProvider));
+        }
+
+        [Fact]
+        public void GetFactory_UnresolvableInitOnlySetterInjection()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                ServiceRegistrator.GetFactory(typeof(TestObjects.UnresolvableInitOnlySetterInjection))(_serviceProvider));
         }
     }
 }
