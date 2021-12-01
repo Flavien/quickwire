@@ -18,9 +18,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Quickwire.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class InjectServiceAttribute : DependencyResolverAttribute
+    public class InjectServiceAttribute : Attribute, IDependencyResolver
     {
-        public override object Resolve(IServiceProvider serviceProvider, Type type)
+        public object Resolve(IServiceProvider serviceProvider, Type type)
         {
             return serviceProvider.GetRequiredService(type);
         }

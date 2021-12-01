@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
 namespace Quickwire
@@ -26,19 +27,14 @@ namespace Quickwire
         public static Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
         {
             ParameterInfo[]? parameters = methodInfo.GetParameters();
-            DependencyResolverAttribute?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
+            IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
 
             return delegate (IServiceProvider serviceProvider)
             {
                 object[] arguments = new object[parameters.Length];
 
                 for (int i = 0; i < parameters.Length; i++)
-                {
-                    arguments[i] = DependencyResolverAttribute.Resolve(
-                        serviceProvider,
-                        parameters[i].ParameterType,
-                        dependencyResolvers[i]);
-                }
+                    arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
 
                 object? result = methodInfo.Invoke(null, arguments);
 
@@ -50,7 +46,7 @@ namespace Quickwire
         {
             ConstructorInfo constructor = GetConstructor(type);
             ParameterInfo[] parameters = constructor.GetParameters();
-            DependencyResolverAttribute?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
+            IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
             List<SetterInfo> setters = GetSetters(type);
 
             return delegate (IServiceProvider serviceProvider)
@@ -58,21 +54,13 @@ namespace Quickwire
                 object[] arguments = new object[parameters.Length];
 
                 for (int i = 0; i < parameters.Length; i++)
-                {
-                    arguments[i] = DependencyResolverAttribute.Resolve(
-                        serviceProvider,
-                        parameters[i].ParameterType,
-                        dependencyResolvers[i]);
-                }
+                    arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
 
                 object result = constructor.Invoke(arguments);
 
                 foreach (SetterInfo setter in setters)
                 {
-                    object resolvedDependency = DependencyResolverAttribute.Resolve(
-                        serviceProvider,
-                        setter.ServiceType,
-                        setter.DependencyResolver);
+                    object resolvedDependency = Resolve(serviceProvider, setter.ServiceType, setter.DependencyResolver);
 
                     setter.Setter.Invoke(result, new[] { resolvedDependency });
                 }
@@ -101,12 +89,12 @@ namespace Quickwire
             }
         }
 
-        private static DependencyResolverAttribute?[] GetParametersDependencyResolvers(ParameterInfo[] parameters)
+        private static IDependencyResolver?[] GetParametersDependencyResolvers(ParameterInfo[] parameters)
         {
-            DependencyResolverAttribute?[] dependencyResolvers = new DependencyResolverAttribute[parameters.Length];
+            IDependencyResolver?[] dependencyResolvers = new IDependencyResolver[parameters.Length];
 
             for (int i = 0; i < parameters.Length; i++)
-                dependencyResolvers[i] = parameters[i].GetCustomAttribute<DependencyResolverAttribute>();
+                dependencyResolvers[i] = GetDependencyResolver(parameters[i]);
 
             return dependencyResolvers;
         }
@@ -119,7 +107,7 @@ namespace Quickwire
 
             foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                DependencyResolverAttribute? dependencyResolver = property.GetCustomAttribute<DependencyResolverAttribute>();
+                IDependencyResolver? dependencyResolver = GetDependencyResolver(property);
                 MethodInfo? setter = property.SetMethod;
 
                 if (setter != null)
@@ -134,6 +122,22 @@ namespace Quickwire
             return setters;
         }
 
-        private record SetterInfo(Type ServiceType, MethodInfo Setter, DependencyResolverAttribute? DependencyResolver);
+        private static IDependencyResolver? GetDependencyResolver(ICustomAttributeProvider customAttributeProvider)
+        {
+            return customAttributeProvider
+                .GetCustomAttributes(typeof(IDependencyResolver), true)
+                .OfType<IDependencyResolver>()
+                .FirstOrDefault();
+        }
+
+        private static object Resolve(IServiceProvider serviceProvider, Type serviceType, IDependencyResolver? dependencyResolver)
+        {
+            if (dependencyResolver == null)
+                return serviceProvider.GetRequiredService(serviceType);
+            else
+                return dependencyResolver.Resolve(serviceProvider, serviceType);
+        }
+
+        private record SetterInfo(Type ServiceType, MethodInfo Setter, IDependencyResolver? DependencyResolver);
     }
 }

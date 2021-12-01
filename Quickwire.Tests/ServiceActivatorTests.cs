@@ -32,6 +32,8 @@ namespace Quickwire.Tests
             _serviceProvider = _services.BuildServiceProvider();
         }
 
+        #region GetFactory(Type)
+
         [Fact]
         public void GetFactoryType_ConstructorInjection()
         {
@@ -142,5 +144,13 @@ namespace Quickwire.Tests
             Assert.Throws<InvalidOperationException>(() =>
                 ServiceActivator.GetFactory(typeof(TestObjects.UnresolvableInitOnlySetterInjection))(_serviceProvider));
         }
+
+        #endregion
+
+        #region GetFactory(MethodInfo)
+
+
+
+        #endregion
     }
 }

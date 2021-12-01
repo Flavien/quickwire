@@ -19,7 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Quickwire.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class InjectSettingAttribute : DependencyResolverAttribute
+    public class InjectSettingAttribute : Attribute, IDependencyResolver
     {
         public InjectSettingAttribute(string configurationKey)
         {
@@ -28,7 +28,7 @@ namespace Quickwire.Attributes
 
         public string ConfigurationKey { get; set; }
 
-        public override object Resolve(IServiceProvider serviceProvider, Type type)
+        public object Resolve(IServiceProvider serviceProvider, Type type)
         {
             IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
 

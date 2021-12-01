@@ -12,22 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Quickwire.Attributes
 {
-    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public abstract class DependencyResolverAttribute : Attribute
+    public interface IDependencyResolver
     {
         public abstract object Resolve(IServiceProvider serviceProvider, Type type);
-
-        public static object Resolve(IServiceProvider serviceProvider, Type serviceType, DependencyResolverAttribute? dependencyResolver)
-        {
-            if (dependencyResolver == null)
-                return serviceProvider.GetRequiredService(serviceType);
-            else
-                return dependencyResolver.Resolve(serviceProvider, serviceType);
-        }
     }
 }
