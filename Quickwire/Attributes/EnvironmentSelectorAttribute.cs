@@ -14,33 +14,30 @@
 
 using System;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Quickwire.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class EnvironmentSelectorAttribute : Attribute
+    public class EnvironmentSelectorAttribute : Attribute, IServiceScanningFilter
     {
         public string[]? Enabled { get; set; }
 
         public string[]? Disabled { get; set; }
 
-        public static bool IsEnabled(EnvironmentSelectorAttribute? attribute, string environmentName)
+        public bool CanScan(IServiceProvider serviceProvider)
         {
-            if (attribute == null)
-            {
-                return true;
-            }
-            else
-            {
-                bool enabled = true;
-                if (attribute.Enabled != null)
-                    enabled &= attribute.Enabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
+            string environmentName = serviceProvider.GetRequiredService<IHostEnvironment>().EnvironmentName;
 
-                if (attribute.Disabled != null)
-                    enabled &= !attribute.Disabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
+            bool enabled = true;
+            if (Enabled != null)
+                enabled &= Enabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
 
-                return enabled;
-            }
+            if (Disabled != null)
+                enabled &= !Disabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
+
+            return enabled;
         }
     }
 }

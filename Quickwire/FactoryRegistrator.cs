@@ -23,30 +23,6 @@ namespace Quickwire
 {
     public static class FactoryRegistrator
     {
-        public static IEnumerable<ServiceDescriptor> GetServiceDescriptors(Type type, string environmentName)
-        {
-            if (EnvironmentSelectorAttribute.IsEnabled(type.GetCustomAttribute<EnvironmentSelectorAttribute>(), environmentName))
-                return ScanFactoryMethods(type, environmentName);
-            else
-                return Enumerable.Empty<ServiceDescriptor>();
-        }
-
-        private static IEnumerable<ServiceDescriptor> ScanFactoryMethods(Type type, string environmentName)
-        {
-            foreach (MethodInfo method in type.GetMethods(BindingFlags.Static | BindingFlags.Public))
-            {
-                if (EnvironmentSelectorAttribute.IsEnabled(method.GetCustomAttribute<EnvironmentSelectorAttribute>(), environmentName))
-                {
-                    foreach (RegisterFactoryAttribute registerAttribute in method.GetCustomAttributes<RegisterFactoryAttribute>())
-                    {
-                        Type serviceType = registerAttribute.ServiceType ?? type;
-
-                        yield return new ServiceDescriptor(serviceType, GetFactory(method), registerAttribute.Scope);
-                    }
-                }
-            }
-        }
-
         public static Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
         {
             ParameterInfo[]? parameters = methodInfo.GetParameters();

@@ -17,25 +17,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
 namespace Quickwire
 {
     public static class ServiceRegistrator
     {
-        public static IEnumerable<ServiceDescriptor> GetServiceDescriptors(Type type, string environmentName)
-        {
-            if (EnvironmentSelectorAttribute.IsEnabled(type.GetCustomAttribute<EnvironmentSelectorAttribute>(), environmentName))
-            {
-                foreach (RegisterServiceAttribute registerAttribute in type.GetCustomAttributes<RegisterServiceAttribute>())
-                {
-                    Type serviceType = registerAttribute.ServiceType ?? type;
-                    yield return new ServiceDescriptor(serviceType, GetFactory(type), registerAttribute.Scope);
-                }
-            }
-        }
-
         public static Func<IServiceProvider, object> GetFactory(Type type)
         {
             ConstructorInfo constructor = GetConstructor(type);

@@ -18,7 +18,6 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 
 namespace Quickwire
 {
@@ -40,11 +39,10 @@ namespace Quickwire
             ServiceDescriptorMergeStrategy mergeStrategy)
         {
             ServiceProvider serviceProvider = services.BuildServiceProvider();
-            string environmentName = serviceProvider.GetRequiredService<IHostEnvironment>().EnvironmentName;
 
             foreach (Type type in assembly.GetExportedTypes())
             {
-                foreach (ServiceDescriptor serviceDescriptor in ServiceRegistrator.GetServiceDescriptors(type, environmentName))
+                foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanServiceRegistrations(type, serviceProvider))
                     MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
             }
 
@@ -57,11 +55,10 @@ namespace Quickwire
             ServiceDescriptorMergeStrategy mergeStrategy)
         {
             ServiceProvider serviceProvider = services.BuildServiceProvider();
-            string environmentName = serviceProvider.GetRequiredService<IHostEnvironment>().EnvironmentName;
 
             foreach (Type type in assembly.GetExportedTypes())
             {
-                foreach (ServiceDescriptor serviceDescriptor in FactoryRegistrator.GetServiceDescriptors(type, environmentName))
+                foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanFactoryRegistrations(type, serviceProvider))
                     MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
             }
 
@@ -74,12 +71,11 @@ namespace Quickwire
             mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
         {
             ServiceProvider serviceProvider = services.BuildServiceProvider();
-            string environmentName = serviceProvider.GetRequiredService<IHostEnvironment>().EnvironmentName;
 
-            foreach (ServiceDescriptor serviceDescriptor in ServiceRegistrator.GetServiceDescriptors(type, environmentName))
+            foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanServiceRegistrations(type, serviceProvider))
                 MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
 
-            foreach (ServiceDescriptor serviceDescriptor in FactoryRegistrator.GetServiceDescriptors(type, environmentName))
+            foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanFactoryRegistrations(type, serviceProvider))
                 MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
 
             return services;
