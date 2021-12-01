@@ -22,9 +22,9 @@ using Quickwire.Attributes;
 
 namespace Quickwire
 {
-    public static class ServiceActivator
+    public class ServiceActivator : IServiceActivator
     {
-        public static Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
+        public Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
         {
             ParameterInfo[]? parameters = methodInfo.GetParameters();
             IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
@@ -42,7 +42,7 @@ namespace Quickwire
             };
         }
 
-        public static Func<IServiceProvider, object> GetFactory(Type type)
+        public Func<IServiceProvider, object> GetFactory(Type type)
         {
             ConstructorInfo constructor = GetConstructor(type);
             ParameterInfo[] parameters = constructor.GetParameters();

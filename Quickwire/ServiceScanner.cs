@@ -11,12 +11,14 @@ namespace Quickwire
     {
         public static IEnumerable<ServiceDescriptor> ScanServiceRegistrations(Type type, IServiceProvider serviceProvider)
         {
+            IServiceActivator serviceActivator = serviceProvider.GetService<IServiceActivator>();
+
             if (CanScan(type, serviceProvider))
             {
                 foreach (RegisterServiceAttribute registerAttribute in type.GetCustomAttributes<RegisterServiceAttribute>())
                 {
                     Type serviceType = registerAttribute.ServiceType ?? type;
-                    yield return new ServiceDescriptor(serviceType, ServiceActivator.GetFactory(type), registerAttribute.Scope);
+                    yield return new ServiceDescriptor(serviceType, serviceActivator.GetFactory(type), registerAttribute.Scope);
                 }
             }
         }
@@ -24,22 +26,19 @@ namespace Quickwire
         public static IEnumerable<ServiceDescriptor> ScanFactoryRegistrations(Type type, IServiceProvider serviceProvider)
         {
             if (CanScan(type, serviceProvider))
-                return ScanFactoryMethods(type, serviceProvider);
-            else
-                return Enumerable.Empty<ServiceDescriptor>();
-        }
-
-        private static IEnumerable<ServiceDescriptor> ScanFactoryMethods(Type type, IServiceProvider serviceProvider)
-        {
-            foreach (MethodInfo method in type.GetMethods(BindingFlags.Static | BindingFlags.Public))
             {
-                if (CanScan(method, serviceProvider))
-                {
-                    foreach (RegisterFactoryAttribute registerAttribute in method.GetCustomAttributes<RegisterFactoryAttribute>())
-                    {
-                        Type serviceType = registerAttribute.ServiceType ?? type;
+                IServiceActivator serviceActivator = serviceProvider.GetService<IServiceActivator>();
 
-                        yield return new ServiceDescriptor(serviceType, ServiceActivator.GetFactory(method), registerAttribute.Scope);
+                foreach (MethodInfo method in type.GetMethods(BindingFlags.Static | BindingFlags.Public))
+                {
+                    if (CanScan(method, serviceProvider))
+                    {
+                        foreach (RegisterFactoryAttribute registerAttribute in method.GetCustomAttributes<RegisterFactoryAttribute>())
+                        {
+                            Type serviceType = registerAttribute.ServiceType ?? type;
+
+                            yield return new ServiceDescriptor(serviceType, serviceActivator.GetFactory(method), registerAttribute.Scope);
+                        }
                     }
                 }
             }
