@@ -23,11 +23,34 @@ namespace Quickwire
 {
     public static class ServiceActivator
     {
+        public static Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
+        {
+            ParameterInfo[]? parameters = methodInfo.GetParameters();
+            DependencyResolverAttribute?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
+
+            return delegate (IServiceProvider serviceProvider)
+            {
+                object[] arguments = new object[parameters.Length];
+
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    arguments[i] = DependencyResolverAttribute.Resolve(
+                        serviceProvider,
+                        parameters[i].ParameterType,
+                        dependencyResolvers[i]);
+                }
+
+                object? result = methodInfo.Invoke(null, arguments);
+
+                return result;
+            };
+        }
+
         public static Func<IServiceProvider, object> GetFactory(Type type)
         {
             ConstructorInfo constructor = GetConstructor(type);
             ParameterInfo[] parameters = constructor.GetParameters();
-            DependencyResolverAttribute?[] dependencyResolvers = GetConstructorDependencyResolvers(parameters);
+            DependencyResolverAttribute?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
             List<SetterInfo> setters = GetSetters(type);
 
             return delegate (IServiceProvider serviceProvider)
@@ -78,7 +101,7 @@ namespace Quickwire
             }
         }
 
-        private static DependencyResolverAttribute?[] GetConstructorDependencyResolvers(ParameterInfo[] parameters)
+        private static DependencyResolverAttribute?[] GetParametersDependencyResolvers(ParameterInfo[] parameters)
         {
             DependencyResolverAttribute?[] dependencyResolvers = new DependencyResolverAttribute[parameters.Length];
 

@@ -39,7 +39,7 @@ namespace Quickwire
                     {
                         Type serviceType = registerAttribute.ServiceType ?? type;
 
-                        yield return new ServiceDescriptor(serviceType, FactoryActivator.GetFactory(method), registerAttribute.Scope);
+                        yield return new ServiceDescriptor(serviceType, ServiceActivator.GetFactory(method), registerAttribute.Scope);
                     }
                 }
             }
