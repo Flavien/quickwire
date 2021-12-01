@@ -16,7 +16,7 @@ namespace Quickwire
                 foreach (RegisterServiceAttribute registerAttribute in type.GetCustomAttributes<RegisterServiceAttribute>())
                 {
                     Type serviceType = registerAttribute.ServiceType ?? type;
-                    yield return new ServiceDescriptor(serviceType, ServiceRegistrator.GetFactory(type), registerAttribute.Scope);
+                    yield return new ServiceDescriptor(serviceType, ServiceActivator.GetFactory(type), registerAttribute.Scope);
                 }
             }
         }
@@ -39,7 +39,7 @@ namespace Quickwire
                     {
                         Type serviceType = registerAttribute.ServiceType ?? type;
 
-                        yield return new ServiceDescriptor(serviceType, FactoryRegistrator.GetFactory(method), registerAttribute.Scope);
+                        yield return new ServiceDescriptor(serviceType, FactoryActivator.GetFactory(method), registerAttribute.Scope);
                     }
                 }
             }

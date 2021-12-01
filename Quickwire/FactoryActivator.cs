@@ -21,7 +21,7 @@ using Quickwire.Attributes;
 
 namespace Quickwire
 {
-    public static class FactoryRegistrator
+    public static class FactoryActivator
     {
         public static Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
         {

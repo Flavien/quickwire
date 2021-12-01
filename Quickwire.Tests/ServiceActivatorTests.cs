@@ -18,13 +18,13 @@ using Xunit;
 
 namespace Quickwire.Tests
 {
-    public class ServiceRegistratorTests
+    public class ServiceActivatorTests
     {
         private readonly ServiceCollection _services;
         private readonly IServiceProvider _serviceProvider;
         private readonly TestObjects.Dependency _dependency = new TestObjects.Dependency();
 
-        public ServiceRegistratorTests()
+        public ServiceActivatorTests()
         {
             _services = new ServiceCollection();
             _services.AddSingleton<TestObjects.Dependency>(_dependency);
@@ -35,7 +35,7 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactory_ConstructorInjection()
         {
-            object resultObject = ServiceRegistrator.GetFactory(typeof(TestObjects.ConstructorInjection))(_serviceProvider);
+            object resultObject = ServiceActivator.GetFactory(typeof(TestObjects.ConstructorInjection))(_serviceProvider);
             TestObjects.ConstructorInjection result = resultObject as TestObjects.ConstructorInjection;
 
             Assert.NotNull(result);
@@ -46,7 +46,7 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactory_MultipleConstructors()
         {
-            object resultObject = ServiceRegistrator.GetFactory(typeof(TestObjects.MultipleConstructors))(_serviceProvider);
+            object resultObject = ServiceActivator.GetFactory(typeof(TestObjects.MultipleConstructors))(_serviceProvider);
             TestObjects.MultipleConstructors result = resultObject as TestObjects.MultipleConstructors;
 
             Assert.NotNull(result);
@@ -58,34 +58,34 @@ namespace Quickwire.Tests
         public void GetFactory_PrivateConstructor()
         {
             Assert.Throws<ArgumentException>(() =>
-                ServiceRegistrator.GetFactory(typeof(TestObjects.PrivateConstructor))(_serviceProvider));
+                ServiceActivator.GetFactory(typeof(TestObjects.PrivateConstructor))(_serviceProvider));
         }
 
         [Fact]
         public void GetFactory_NoConstructorSelector()
         {
             Assert.Throws<ArgumentException>(() =>
-                ServiceRegistrator.GetFactory(typeof(TestObjects.NoConstructorSelector))(_serviceProvider));
+                ServiceActivator.GetFactory(typeof(TestObjects.NoConstructorSelector))(_serviceProvider));
         }
 
         [Fact]
         public void GetFactory_MoreThanOneConstructorSelector()
         {
             Assert.Throws<ArgumentException>(() =>
-                ServiceRegistrator.GetFactory(typeof(TestObjects.NoConstructorSelector))(_serviceProvider));
+                ServiceActivator.GetFactory(typeof(TestObjects.NoConstructorSelector))(_serviceProvider));
         }
 
         [Fact]
         public void GetFactory_UnresolvableConstructorInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                ServiceRegistrator.GetFactory(typeof(TestObjects.UnresolvableConstructorInjection))(_serviceProvider));
+                ServiceActivator.GetFactory(typeof(TestObjects.UnresolvableConstructorInjection))(_serviceProvider));
         }
 
         [Fact]
         public void GetFactory_NoSetterInjection()
         {
-            object resultObject = ServiceRegistrator.GetFactory(typeof(TestObjects.NoSetterInjection))(_serviceProvider);
+            object resultObject = ServiceActivator.GetFactory(typeof(TestObjects.NoSetterInjection))(_serviceProvider);
             TestObjects.NoSetterInjection result = resultObject as TestObjects.NoSetterInjection;
 
             Assert.NotNull(result);
@@ -97,7 +97,7 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactory_SetterInjection()
         {
-            object resultObject = ServiceRegistrator.GetFactory(typeof(TestObjects.SetterInjection))(_serviceProvider);
+            object resultObject = ServiceActivator.GetFactory(typeof(TestObjects.SetterInjection))(_serviceProvider);
             TestObjects.SetterInjection result = resultObject as TestObjects.SetterInjection;
 
             Assert.NotNull(result);
@@ -107,7 +107,7 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactory_InitOnlySetterInjection()
         {
-            object resultObject = ServiceRegistrator.GetFactory(typeof(TestObjects.InitOnlySetterInjection))(_serviceProvider);
+            object resultObject = ServiceActivator.GetFactory(typeof(TestObjects.InitOnlySetterInjection))(_serviceProvider);
             TestObjects.InitOnlySetterInjection result = resultObject as TestObjects.InitOnlySetterInjection;
 
             Assert.NotNull(result);
@@ -119,7 +119,7 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactory_NonPublicSetter()
         {
-            object resultObject = ServiceRegistrator.GetFactory(typeof(TestObjects.NonPublicSetter))(_serviceProvider);
+            object resultObject = ServiceActivator.GetFactory(typeof(TestObjects.NonPublicSetter))(_serviceProvider);
             TestObjects.NonPublicSetter result = resultObject as TestObjects.NonPublicSetter;
 
             Assert.NotNull(result);
@@ -133,14 +133,14 @@ namespace Quickwire.Tests
         public void GetFactory_UnresolvableSetterInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                ServiceRegistrator.GetFactory(typeof(TestObjects.UnresolvableSetterInjection))(_serviceProvider));
+                ServiceActivator.GetFactory(typeof(TestObjects.UnresolvableSetterInjection))(_serviceProvider));
         }
 
         [Fact]
         public void GetFactory_UnresolvableInitOnlySetterInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                ServiceRegistrator.GetFactory(typeof(TestObjects.UnresolvableInitOnlySetterInjection))(_serviceProvider));
+                ServiceActivator.GetFactory(typeof(TestObjects.UnresolvableInitOnlySetterInjection))(_serviceProvider));
         }
     }
 }
