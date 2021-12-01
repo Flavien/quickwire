@@ -50,12 +50,7 @@ namespace Quickwire
         public static Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
         {
             ParameterInfo[]? parameters = methodInfo.GetParameters();
-            DependencyResolverAttribute?[] dependencyResolvers = new DependencyResolverAttribute[parameters.Length];
-
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                dependencyResolvers[i] = parameters[i].GetCustomAttribute<DependencyResolverAttribute>();
-            }
+            DependencyResolverAttribute?[] dependencyResolvers = GetFactoryDependencyResolvers(parameters);
 
             return delegate (IServiceProvider serviceProvider)
             {
@@ -73,6 +68,18 @@ namespace Quickwire
 
                 return result;
             };
+        }
+
+        private static DependencyResolverAttribute?[] GetFactoryDependencyResolvers(ParameterInfo[] parameters)
+        {
+            DependencyResolverAttribute?[] dependencyResolvers = new DependencyResolverAttribute[parameters.Length];
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                dependencyResolvers[i] = parameters[i].GetCustomAttribute<DependencyResolverAttribute>();
+            }
+
+            return dependencyResolvers;
         }
     }
 }
