@@ -13,22 +13,24 @@
 // limitations under the License.
 
 using System;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Quickwire.Tests.Subjects;
 using Xunit;
 
 namespace Quickwire.Tests
 {
     public class ServiceActivatorTests
     {
-        private readonly ServiceActivator _activator;
+        private readonly ServiceActivator _activator = new ServiceActivator();
         private readonly ServiceCollection _services;
         private readonly IServiceProvider _serviceProvider;
-        private readonly TestObjects.Dependency _dependency = new TestObjects.Dependency();
+        private readonly Dependency _dependency = new Dependency();
 
         public ServiceActivatorTests()
         {
             _services = new ServiceCollection();
-            _services.AddSingleton<TestObjects.Dependency>(_dependency);
+            _services.AddSingleton<Dependency>(_dependency);
             _services.AddSingleton<string>("Test");
             _serviceProvider = _services.BuildServiceProvider();
         }
@@ -61,21 +63,21 @@ namespace Quickwire.Tests
         public void GetFactoryType_PrivateConstructor()
         {
             Assert.Throws<ArgumentException>(() =>
-                _activator.GetFactory(typeof(TestObjects.PrivateConstructor))(_serviceProvider));
+                _activator.GetFactory(typeof(TestObjects.PrivateConstructor)));
         }
 
         [Fact]
         public void GetFactoryType_NoConstructorSelector()
         {
             Assert.Throws<ArgumentException>(() =>
-                _activator.GetFactory(typeof(TestObjects.NoConstructorSelector))(_serviceProvider));
+                _activator.GetFactory(typeof(TestObjects.NoConstructorSelector)));
         }
 
         [Fact]
         public void GetFactoryType_MoreThanOneConstructorSelector()
         {
             Assert.Throws<ArgumentException>(() =>
-                _activator.GetFactory(typeof(TestObjects.NoConstructorSelector))(_serviceProvider));
+                _activator.GetFactory(typeof(TestObjects.NoConstructorSelector)));
         }
 
         [Fact]
@@ -150,7 +152,49 @@ namespace Quickwire.Tests
 
         #region GetFactory(MethodInfo)
 
+        [Fact]
+        public void GetFactoryMethodInfo_ParameterInjection()
+        {
+            object resultObject = _activator.GetFactory(GetMethod(nameof(TestMethods.ParameterInjection)))(_serviceProvider);
+            string result = resultObject as string;
 
+            Assert.Equal("Value", result);
+        }
+
+        [Fact]
+        public void GetFactoryMethodInfo_InstanceMethod()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                _activator.GetFactory(GetMethod(nameof(TestMethods.InstanceMethod))));
+        }
+
+        [Fact]
+        public void GetFactoryMethodInfo_InternalMethod()
+        {
+            object resultObject = _activator.GetFactory(GetMethod(nameof(TestMethods.InternalMethod)))(_serviceProvider);
+            string result = resultObject as string;
+
+            Assert.Equal("Value", result);
+        }
+
+        [Fact]
+        public void GetFactoryMethodInfo_PrivateMethod()
+        {
+            object resultObject = _activator.GetFactory(GetMethod("PrivateMethod"))(_serviceProvider);
+            string result = resultObject as string;
+
+            Assert.Equal("Value", result);
+        }
+
+        [Fact]
+        public void GetFactoryMethodInfo_UnresolvableParameterInjection()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                _activator.GetFactory(GetMethod(nameof(TestMethods.UnresolvableParameterInjection)))(_serviceProvider));
+        }
+
+        private MethodInfo GetMethod(string name) =>
+            typeof(TestMethods).GetMethod(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
         #endregion
     }

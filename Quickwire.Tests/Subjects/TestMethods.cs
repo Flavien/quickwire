@@ -13,14 +13,19 @@
 // limitations under the License.
 
 using System;
-using System.Reflection;
 
-namespace Quickwire
+namespace Quickwire.Tests.Subjects
 {
-    public interface IServiceActivator
+    public class TestMethods
     {
-        Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo);
+        public static string ParameterInjection(Dependency dependency) => dependency.Value;
 
-        Func<IServiceProvider, object> GetFactory(Type type);
+        public string InstanceMethod(Dependency dependency) => dependency.Value;
+
+        internal static string InternalMethod(Dependency dependency) => dependency.Value;
+
+        private static string PrivateMethod(Dependency dependency) => dependency.Value;
+
+        public static string UnresolvableParameterInjection(StringComparer dependency) => "";
     }
 }

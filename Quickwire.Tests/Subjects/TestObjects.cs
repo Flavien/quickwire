@@ -15,13 +15,10 @@
 using System;
 using Quickwire.Attributes;
 
-namespace Quickwire.Tests
+namespace Quickwire.Tests.Subjects
 {
     public static class TestObjects
     {
-        public class Dependency
-        { }
-
         public record ConstructorInjection(Dependency Dependency1, string Dependency2);
 
         public class MultipleConstructors

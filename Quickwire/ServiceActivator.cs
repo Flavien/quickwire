@@ -26,6 +26,9 @@ namespace Quickwire
     {
         public Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
         {
+            if (!methodInfo.IsStatic)
+                throw new InvalidOperationException("Factory methods must be static.");
+
             ParameterInfo[]? parameters = methodInfo.GetParameters();
             IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
 
