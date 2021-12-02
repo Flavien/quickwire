@@ -27,7 +27,7 @@ namespace Quickwire
         {
             IServiceActivator serviceActivator = serviceProvider.GetService<IServiceActivator>();
 
-            if (CanScan(type, serviceProvider))
+            if (!type.IsAbstract && CanScan(type, serviceProvider))
             {
                 foreach (RegisterServiceAttribute registerAttribute in type.GetCustomAttributes<RegisterServiceAttribute>())
                 {

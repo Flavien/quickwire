@@ -161,5 +161,10 @@ namespace Quickwire.Tests.Subjects
         {
             public StringComparer DependencyGetInit { get; init; }
         }
+
+        public static class StaticType
+        {
+            static StaticType() { }
+        }
     }
 }

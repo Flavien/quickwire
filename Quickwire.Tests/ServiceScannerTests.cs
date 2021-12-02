@@ -91,6 +91,16 @@ namespace Quickwire.Tests
             Assert.Empty(result);
         }
 
+        [Fact]
+        public void ScanServiceRegistrations_StaticType()
+        {
+            List<ServiceDescriptor> result = ServiceScanner
+                .ScanServiceRegistrations(typeof(TestTypes.StaticType), _serviceProvider)
+                .ToList();
+
+            Assert.Empty(result);
+        }
+
         #endregion
 
         #region ScanFactoryRegistrations

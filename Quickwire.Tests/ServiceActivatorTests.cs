@@ -200,6 +200,17 @@ namespace Quickwire.Tests
                 _activator.GetFactory(typeof(TestObjects.UnresolvableInitOnlySetterInjection))(_serviceProvider));
         }
 
+        [Fact]
+        public void GetFactoryType_StaticType()
+        {
+            ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+                _activator.GetFactory(typeof(TestObjects.StaticType)));
+
+            Assert.Equal(
+                "The type Quickwire.Tests.Subjects.TestObjects+StaticType must have exactly one public constructor.",
+                exception.Message);
+        }
+
         #endregion
 
         #region GetFactory(MethodInfo)

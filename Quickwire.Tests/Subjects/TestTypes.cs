@@ -36,6 +36,9 @@ namespace Quickwire.Tests.Subjects
         [RegisterService(ServiceLifetime.Scoped)]
         public class CannotScan { }
 
+        [RegisterService(ServiceLifetime.Scoped)]
+        public static class StaticType { }
+
         public class FactoryRegistered
         {
             [RegisterFactory(ServiceLifetime.Scoped)]
