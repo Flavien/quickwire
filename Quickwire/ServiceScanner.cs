@@ -52,7 +52,7 @@ namespace Quickwire
                     {
                         foreach (RegisterFactoryAttribute registerAttribute in method.GetCustomAttributes<RegisterFactoryAttribute>())
                         {
-                            Type serviceType = registerAttribute.ServiceType ?? type;
+                            Type serviceType = registerAttribute.ServiceType ?? method.ReturnType;
                             yield return new ServiceDescriptor(
                                 serviceType,
                                 serviceActivator.GetFactory(method),
