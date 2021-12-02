@@ -20,6 +20,12 @@ namespace Quickwire.Tests.Subjects
     {
         public static string ParameterInjection(Dependency dependency) => dependency.Value;
 
+        public static string ParameterCustomInjection(
+            [TestDependencyResolver(Value = "Custom Dependency")] Dependency dependency)
+        {
+            return dependency.Value;
+        }
+
         public string InstanceMethod(Dependency dependency) => dependency.Value;
 
         internal static string InternalMethod(Dependency dependency) => dependency.Value;

@@ -43,7 +43,18 @@ namespace Quickwire.Tests.Subjects
 
         public class PrivateConstructor
         {
-            private PrivateConstructor()
+            [ServiceConstructor]
+            private PrivateConstructor(Dependency dependency)
+            {
+                this.Dependency = dependency;
+            }
+
+            public Dependency Dependency { get; }
+        }
+
+        public class PrivateConstructorWithoutSelector
+        {
+            private PrivateConstructorWithoutSelector()
             { }
         }
 
@@ -88,6 +99,12 @@ namespace Quickwire.Tests.Subjects
             public Dependency DependencyGetSet { get; set; }
         }
 
+        public class CustomSetterInjection
+        {
+            [TestDependencyResolver(Value = "Custom Dependency")]
+            public Dependency DependencyGetSet { get; set; }
+        }
+
         [InjectAllInitOnlyProperties]
         public class InitOnlySetterInjection
         {
@@ -96,6 +113,18 @@ namespace Quickwire.Tests.Subjects
             public Dependency DependencyGetSet { get; set; }
 
             public Dependency DependencyGetInit { get; init; }
+        }
+
+        [InjectAllInitOnlyProperties]
+        public class InitOnlyCustomSetterInjection
+        {
+            public Dependency DependencyGetInit1 { get; init; }
+
+            [InjectService]
+            public Dependency DependencyGetInit2 { get; init; }
+
+            [TestDependencyResolver(Value = "Custom Dependency")]
+            public Dependency DependencyGetInit3 { get; init; }
         }
 
         public class NonPublicSetter

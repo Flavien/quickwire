@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Quickwire.Attributes;
+
 namespace Quickwire.Tests.Subjects
 {
-    public class Dependency
+    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class TestDependencyResolverAttribute : Attribute, IDependencyResolver
     {
-        public Dependency(string value)
-        {
-            Value = value;
-        }
+        public string Value { get; set; }
 
-        public string Value { get ; }
+        public object Resolve(IServiceProvider serviceProvider, Type type) => new Dependency(Value);
     }
 }

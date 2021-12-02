@@ -74,21 +74,30 @@ namespace Quickwire
 
         private static ConstructorInfo GetConstructor(Type type)
         {
-            ConstructorInfo[] constructors = type.GetConstructors();
-            if (constructors.Length == 1)
+            ConstructorInfo[] constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            List<ConstructorInfo> primaryConstructor = constructors
+                .Where(constructor => constructor.IsDefined(typeof(ServiceConstructorAttribute), false))
+                .ToList();
+
+            if (primaryConstructor.Count == 1)
             {
-                return constructors[0];
+                return primaryConstructor[0];
+            }
+            else if (primaryConstructor.Count > 1)
+            {
+                throw new ArgumentException($"The type {type.FullName} has more than one constructor decorated with the [ServiceConstructor] attribute.");
             }
             else
             {
-                List<ConstructorInfo> primaryConstructor = constructors
-                    .Where(constructor => constructor.IsDefined(typeof(ServiceConstructorAttribute), true))
+                List<ConstructorInfo> publicConstructors = constructors
+                    .Where(constructors => constructors.IsPublic)
                     .ToList();
 
-                if (primaryConstructor.Count != 1)
-                    throw new ArgumentException();
+                if (publicConstructors.Count == 1)
+                    return publicConstructors[0];
                 else
-                    return primaryConstructor[0];
+                    throw new ArgumentException($"The type {type.FullName} must have exactly one public constructor.");
             }
         }
 
