@@ -74,7 +74,8 @@ namespace Quickwire
 
         private static ConstructorInfo GetConstructor(Type type)
         {
-            ConstructorInfo[] constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            ConstructorInfo[] constructors = type.GetConstructors(
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             List<ConstructorInfo> primaryConstructor = constructors
                 .Where(constructor => constructor.IsDefined(typeof(ServiceConstructorAttribute), false))
@@ -86,7 +87,9 @@ namespace Quickwire
             }
             else if (primaryConstructor.Count > 1)
             {
-                throw new ArgumentException($"The type {type.FullName} has more than one constructor decorated with the [ServiceConstructor] attribute.");
+                throw new ArgumentException(
+                    $"The type {type.FullName} has more than one constructor decorated with the " +
+                    $"[ServiceConstructor] attribute.");
             }
             else
             {
@@ -116,15 +119,19 @@ namespace Quickwire
             bool injectAllInitOnlyProperties = type.IsDefined(typeof(InjectAllInitOnlyPropertiesAttribute), true);
 
             List<SetterInfo> setters = new List<SetterInfo>();
+            PropertyInfo[] properties = type.GetProperties(
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            foreach (PropertyInfo property in properties)
             {
                 IDependencyResolver? dependencyResolver = GetDependencyResolver(property);
                 MethodInfo? setter = property.SetMethod;
 
                 if (setter != null)
                 {
-                    bool isInitOnly = setter.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
+                    bool isInitOnly = setter.ReturnParameter
+                        .GetRequiredCustomModifiers()
+                        .Contains(typeof(IsExternalInit));
 
                     if (dependencyResolver != null || (injectAllInitOnlyProperties && isInitOnly))
                         setters.Add(new SetterInfo(property.PropertyType, setter, dependencyResolver));

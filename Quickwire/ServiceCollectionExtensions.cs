@@ -28,6 +28,8 @@ namespace Quickwire
             Assembly assembly,
             ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
         {
+            services.TryAddSingleton<IServiceActivator>(new ServiceActivator());
+
             return services
                 .AddAssemblyServices(assembly, mergeStrategy)
                 .AddAssemblyFactories(assembly, mergeStrategy);
