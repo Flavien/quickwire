@@ -184,6 +184,16 @@ namespace Quickwire.Tests
         }
 
         [Fact]
+        public void GetFactoryType_OptionalSetterInjection()
+        {
+            object resultObject = _activator.GetFactory(typeof(TestObjects.OptionalSetterInjection))(_serviceProvider);
+            TestObjects.OptionalSetterInjection result = resultObject as TestObjects.OptionalSetterInjection;
+
+            Assert.NotNull(result);
+            Assert.Null(result.DependencyGetSet);
+        }
+
+        [Fact]
         public void GetFactoryType_UnresolvableInitOnlySetterInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>

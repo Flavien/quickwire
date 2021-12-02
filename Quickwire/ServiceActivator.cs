@@ -34,7 +34,7 @@ namespace Quickwire
 
             return delegate (IServiceProvider serviceProvider)
             {
-                object[] arguments = new object[parameters.Length];
+                object?[] arguments = new object[parameters.Length];
 
                 for (int i = 0; i < parameters.Length; i++)
                     arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
@@ -54,7 +54,7 @@ namespace Quickwire
 
             return delegate (IServiceProvider serviceProvider)
             {
-                object[] arguments = new object[parameters.Length];
+                object?[] arguments = new object[parameters.Length];
 
                 for (int i = 0; i < parameters.Length; i++)
                     arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
@@ -63,7 +63,7 @@ namespace Quickwire
 
                 foreach (SetterInfo setter in setters)
                 {
-                    object resolvedDependency = Resolve(serviceProvider, setter.ServiceType, setter.DependencyResolver);
+                    object? resolvedDependency = Resolve(serviceProvider, setter.ServiceType, setter.DependencyResolver);
 
                     setter.Setter.Invoke(result, new[] { resolvedDependency });
                 }
@@ -149,7 +149,7 @@ namespace Quickwire
                 .FirstOrDefault();
         }
 
-        private static object Resolve(IServiceProvider serviceProvider, Type serviceType, IDependencyResolver? dependencyResolver)
+        private static object? Resolve(IServiceProvider serviceProvider, Type serviceType, IDependencyResolver? dependencyResolver)
         {
             if (dependencyResolver == null)
                 return serviceProvider.GetRequiredService(serviceType);

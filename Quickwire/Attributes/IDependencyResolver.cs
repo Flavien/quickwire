@@ -18,6 +18,6 @@ namespace Quickwire.Attributes
 {
     public interface IDependencyResolver
     {
-        public abstract object Resolve(IServiceProvider serviceProvider, Type type);
+        public abstract object? Resolve(IServiceProvider serviceProvider, Type type);
     }
 }

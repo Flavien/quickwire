@@ -46,7 +46,7 @@ namespace Quickwire.Tests.Subjects
             [ServiceConstructor]
             private PrivateConstructor(Dependency dependency)
             {
-                this.Dependency = dependency;
+                Dependency = dependency;
             }
 
             public Dependency Dependency { get; }
@@ -147,6 +147,12 @@ namespace Quickwire.Tests.Subjects
         public class UnresolvableSetterInjection
         {
             [InjectService]
+            public StringComparer DependencyGetSet { get; set; }
+        }
+
+        public class OptionalSetterInjection
+        {
+            [InjectService(Optional = true)]
             public StringComparer DependencyGetSet { get; set; }
         }
 

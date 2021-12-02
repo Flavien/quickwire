@@ -20,9 +20,14 @@ namespace Quickwire.Attributes
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class InjectServiceAttribute : Attribute, IDependencyResolver
     {
-        public object Resolve(IServiceProvider serviceProvider, Type type)
+        public bool Optional { get; set; }
+
+        public object? Resolve(IServiceProvider serviceProvider, Type type)
         {
-            return serviceProvider.GetRequiredService(type);
+            if (Optional)
+                return serviceProvider.GetService(type);
+            else
+                return serviceProvider.GetRequiredService(type);
         }
     }
 }
