@@ -14,7 +14,7 @@
 
 using System;
 using Quickwire.Attributes;
-using Quickwire.Tests.TestImplementations;
+using Quickwire.Tests.Implementations;
 
 namespace Quickwire.Tests
 {

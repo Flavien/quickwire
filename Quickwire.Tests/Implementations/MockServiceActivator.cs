@@ -15,7 +15,7 @@
 using System;
 using System.Reflection;
 
-namespace Quickwire.Tests.TestImplementations
+namespace Quickwire.Tests.Implementations
 {
     public class MockServiceActivator : IServiceActivator
     {

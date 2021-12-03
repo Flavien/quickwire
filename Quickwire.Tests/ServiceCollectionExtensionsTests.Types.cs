@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
-namespace Quickwire.Tests.TestImplementations
+namespace Quickwire.Tests
 {
-    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class TestDependencyResolverAttribute : Attribute, IDependencyResolver
+    public partial class ServiceCollectionExtensionsTests
     {
-        public string Value { get; set; }
+        [RegisterService(ServiceLifetime.Scoped)]
+        public class TypeRegistered { }
 
-        public object Resolve(IServiceProvider serviceProvider, Type type) => new Dependency(Value);
+        public class TypeNotRegistered { }
     }
 }

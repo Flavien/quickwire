@@ -15,7 +15,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
-using Quickwire.Tests.TestImplementations;
+using Quickwire.Tests.Implementations;
 
 namespace Quickwire.Tests
 {
