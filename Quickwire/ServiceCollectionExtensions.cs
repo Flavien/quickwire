@@ -28,50 +28,25 @@ namespace Quickwire
             Assembly assembly,
             ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
         {
-            services.TryAddSingleton<IServiceActivator>(new ServiceActivator());
-
-            return services
-                .AddAssemblyServices(assembly, mergeStrategy)
-                .AddAssemblyFactories(assembly, mergeStrategy);
-        }
-
-        public static IServiceCollection AddAssemblyServices(
-            this IServiceCollection services,
-            Assembly assembly,
-            ServiceDescriptorMergeStrategy mergeStrategy)
-        {
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
-
             foreach (Type type in assembly.GetExportedTypes())
-            {
-                foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanServiceRegistrations(type, serviceProvider))
-                    MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
-            }
+                services.ScanType(type, mergeStrategy);
 
             return services;
         }
 
-        public static IServiceCollection AddAssemblyFactories(
+        public static IServiceCollection ScanCurrentAssembly(
             this IServiceCollection services,
-            Assembly assembly,
-            ServiceDescriptorMergeStrategy mergeStrategy)
+            ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
         {
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            foreach (Type type in assembly.GetExportedTypes())
-            {
-                foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanFactoryRegistrations(type, serviceProvider))
-                    MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
-            }
-
-            return services;
+            return services.ScanAssembly(Assembly.GetCallingAssembly(), mergeStrategy);
         }
 
-        public static IServiceCollection AddType(
+        public static IServiceCollection ScanType(
             this IServiceCollection services,
             Type type, ServiceDescriptorMergeStrategy
             mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
         {
+            services.TryAddSingleton<IServiceActivator>(new ServiceActivator());
             ServiceProvider serviceProvider = services.BuildServiceProvider();
 
             foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanServiceRegistrations(type, serviceProvider))
