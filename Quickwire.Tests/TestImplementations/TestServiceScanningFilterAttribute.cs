@@ -15,7 +15,7 @@
 using System;
 using Quickwire.Attributes;
 
-namespace Quickwire.Tests.Subjects
+namespace Quickwire.Tests.TestImplementations
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class TestServiceScanningFilterAttribute : Attribute, IServiceScanningFilter

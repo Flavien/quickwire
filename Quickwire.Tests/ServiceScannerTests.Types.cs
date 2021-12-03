@@ -15,10 +15,11 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
+using Quickwire.Tests.TestImplementations;
 
-namespace Quickwire.Tests.Subjects
+namespace Quickwire.Tests
 {
-    public class TestTypes
+    public partial class ServiceScannerTests
     {
         [RegisterService(ServiceLifetime.Scoped)]
         public class TypeRegistered { }

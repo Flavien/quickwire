@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Quickwire.Tests.Subjects
+namespace Quickwire.Tests.TestImplementations
 {
     public class Dependency
     {

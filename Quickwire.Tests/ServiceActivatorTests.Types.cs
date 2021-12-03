@@ -14,10 +14,11 @@
 
 using System;
 using Quickwire.Attributes;
+using Quickwire.Tests.TestImplementations;
 
-namespace Quickwire.Tests.Subjects
+namespace Quickwire.Tests
 {
-    public static class TestObjects
+    public partial class ServiceActivatorTests
     {
         public record ConstructorInjection(Dependency Dependency1, string Dependency2);
 
@@ -165,6 +166,25 @@ namespace Quickwire.Tests.Subjects
         public static class StaticType
         {
             static StaticType() { }
+        }
+
+        public partial class Methods
+        {
+            public static string ParameterInjection(Dependency dependency) => dependency.Value;
+
+            public static string ParameterCustomInjection(
+                [TestDependencyResolver(Value = "Custom Dependency")] Dependency dependency)
+            {
+                return dependency.Value;
+            }
+
+            public string InstanceMethod(Dependency dependency) => dependency.Value;
+
+            internal static string InternalMethod(Dependency dependency) => dependency.Value;
+
+            private static string PrivateMethod(Dependency dependency) => dependency.Value;
+
+            public static string UnresolvableParameterInjection(StringComparer dependency) => "";
         }
     }
 }

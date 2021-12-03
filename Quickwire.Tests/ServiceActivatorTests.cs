@@ -15,12 +15,12 @@
 using System;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Quickwire.Tests.Subjects;
+using Quickwire.Tests.TestImplementations;
 using Xunit;
 
 namespace Quickwire.Tests
 {
-    public class ServiceActivatorTests
+    public partial class ServiceActivatorTests
     {
         private readonly ServiceActivator _activator = new ServiceActivator();
         private readonly ServiceCollection _services;
@@ -40,8 +40,8 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryType_ConstructorInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.ConstructorInjection))(_serviceProvider);
-            TestObjects.ConstructorInjection result = resultObject as TestObjects.ConstructorInjection;
+            object resultObject = _activator.GetFactory(typeof(ConstructorInjection))(_serviceProvider);
+            ConstructorInjection result = resultObject as ConstructorInjection;
 
             Assert.NotNull(result);
             Assert.Equal(_dependency, result.Dependency1);
@@ -51,8 +51,8 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryType_MultipleConstructors()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.MultipleConstructors))(_serviceProvider);
-            TestObjects.MultipleConstructors result = resultObject as TestObjects.MultipleConstructors;
+            object resultObject = _activator.GetFactory(typeof(MultipleConstructors))(_serviceProvider);
+            MultipleConstructors result = resultObject as MultipleConstructors;
 
             Assert.NotNull(result);
             Assert.Equal(_dependency, result.Dependency1);
@@ -62,8 +62,8 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryType_PrivateConstructor()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.PrivateConstructor))(_serviceProvider);
-            TestObjects.PrivateConstructor result = resultObject as TestObjects.PrivateConstructor;
+            object resultObject = _activator.GetFactory(typeof(PrivateConstructor))(_serviceProvider);
+            PrivateConstructor result = resultObject as PrivateConstructor;
 
             Assert.NotNull(result);
             Assert.Equal(_dependency, result.Dependency);
@@ -73,17 +73,17 @@ namespace Quickwire.Tests
         public void GetFactoryType_PrivateConstructorWithoutSelector()
         {
             Assert.Throws<ArgumentException>(() =>
-                _activator.GetFactory(typeof(TestObjects.PrivateConstructorWithoutSelector)));
+                _activator.GetFactory(typeof(PrivateConstructorWithoutSelector)));
         }
 
         [Fact]
         public void GetFactoryType_NoConstructorSelector()
         {
             ArgumentException exception = Assert.Throws<ArgumentException>(() =>
-                _activator.GetFactory(typeof(TestObjects.NoConstructorSelector)));
+                _activator.GetFactory(typeof(NoConstructorSelector)));
 
             Assert.Equal(
-                "The type Quickwire.Tests.Subjects.TestObjects+NoConstructorSelector must have exactly one public " +
+                "The type Quickwire.Tests.ServiceActivatorTests+NoConstructorSelector must have exactly one public " +
                 "constructor.",
                 exception.Message);
         }
@@ -92,10 +92,10 @@ namespace Quickwire.Tests
         public void GetFactoryType_MoreThanOneConstructorSelector()
         {
             ArgumentException exception = Assert.Throws<ArgumentException>(() =>
-                _activator.GetFactory(typeof(TestObjects.MoreThanOneConstructorSelector)));
+                _activator.GetFactory(typeof(MoreThanOneConstructorSelector)));
 
             Assert.Equal(
-                "The type Quickwire.Tests.Subjects.TestObjects+MoreThanOneConstructorSelector has more than one " +
+                "The type Quickwire.Tests.ServiceActivatorTests+MoreThanOneConstructorSelector has more than one " +
                 "constructor decorated with the [ServiceConstructor] attribute.",
                 exception.Message);
         }
@@ -104,14 +104,14 @@ namespace Quickwire.Tests
         public void GetFactoryType_UnresolvableConstructorInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                _activator.GetFactory(typeof(TestObjects.UnresolvableConstructorInjection))(_serviceProvider));
+                _activator.GetFactory(typeof(UnresolvableConstructorInjection))(_serviceProvider));
         }
 
         [Fact]
         public void GetFactoryType_NoSetterInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.NoSetterInjection))(_serviceProvider);
-            TestObjects.NoSetterInjection result = resultObject as TestObjects.NoSetterInjection;
+            object resultObject = _activator.GetFactory(typeof(NoSetterInjection))(_serviceProvider);
+            NoSetterInjection result = resultObject as NoSetterInjection;
 
             Assert.NotNull(result);
             Assert.Null(result.DependencyGet);
@@ -122,8 +122,8 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryType_SetterInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.SetterInjection))(_serviceProvider);
-            TestObjects.SetterInjection result = resultObject as TestObjects.SetterInjection;
+            object resultObject = _activator.GetFactory(typeof(SetterInjection))(_serviceProvider);
+            SetterInjection result = resultObject as SetterInjection;
 
             Assert.NotNull(result);
             Assert.Equal(_dependency, result.DependencyGetSet);
@@ -132,8 +132,8 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryType_CustomSetterInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.CustomSetterInjection))(_serviceProvider);
-            TestObjects.CustomSetterInjection result = resultObject as TestObjects.CustomSetterInjection;
+            object resultObject = _activator.GetFactory(typeof(CustomSetterInjection))(_serviceProvider);
+            CustomSetterInjection result = resultObject as CustomSetterInjection;
 
             Assert.NotNull(result);
             Assert.Equal("Custom Dependency", result.DependencyGetSet.Value);
@@ -142,8 +142,8 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryType_InitOnlySetterInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.InitOnlySetterInjection))(_serviceProvider);
-            TestObjects.InitOnlySetterInjection result = resultObject as TestObjects.InitOnlySetterInjection;
+            object resultObject = _activator.GetFactory(typeof(InitOnlySetterInjection))(_serviceProvider);
+            InitOnlySetterInjection result = resultObject as InitOnlySetterInjection;
 
             Assert.NotNull(result);
             Assert.Null(result.DependencyGet);
@@ -154,8 +154,8 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryType_InitOnlyCustomSetterInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.InitOnlyCustomSetterInjection))(_serviceProvider);
-            TestObjects.InitOnlyCustomSetterInjection result = resultObject as TestObjects.InitOnlyCustomSetterInjection;
+            object resultObject = _activator.GetFactory(typeof(InitOnlyCustomSetterInjection))(_serviceProvider);
+            InitOnlyCustomSetterInjection result = resultObject as InitOnlyCustomSetterInjection;
 
             Assert.NotNull(result);
             Assert.Equal(_dependency, result.DependencyGetInit1);
@@ -166,8 +166,8 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryType_NonPublicSetter()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.NonPublicSetter))(_serviceProvider);
-            TestObjects.NonPublicSetter result = resultObject as TestObjects.NonPublicSetter;
+            object resultObject = _activator.GetFactory(typeof(NonPublicSetter))(_serviceProvider);
+            NonPublicSetter result = resultObject as NonPublicSetter;
 
             Assert.NotNull(result);
             Assert.Equal(_dependency, result.GetDependencyGetSet1());
@@ -180,14 +180,14 @@ namespace Quickwire.Tests
         public void GetFactoryType_UnresolvableSetterInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                _activator.GetFactory(typeof(TestObjects.UnresolvableSetterInjection))(_serviceProvider));
+                _activator.GetFactory(typeof(UnresolvableSetterInjection))(_serviceProvider));
         }
 
         [Fact]
         public void GetFactoryType_OptionalSetterInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(TestObjects.OptionalSetterInjection))(_serviceProvider);
-            TestObjects.OptionalSetterInjection result = resultObject as TestObjects.OptionalSetterInjection;
+            object resultObject = _activator.GetFactory(typeof(OptionalSetterInjection))(_serviceProvider);
+            OptionalSetterInjection result = resultObject as OptionalSetterInjection;
 
             Assert.NotNull(result);
             Assert.Null(result.DependencyGetSet);
@@ -197,17 +197,17 @@ namespace Quickwire.Tests
         public void GetFactoryType_UnresolvableInitOnlySetterInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                _activator.GetFactory(typeof(TestObjects.UnresolvableInitOnlySetterInjection))(_serviceProvider));
+                _activator.GetFactory(typeof(UnresolvableInitOnlySetterInjection))(_serviceProvider));
         }
 
         [Fact]
         public void GetFactoryType_StaticType()
         {
             ArgumentException exception = Assert.Throws<ArgumentException>(() =>
-                _activator.GetFactory(typeof(TestObjects.StaticType)));
+                _activator.GetFactory(typeof(StaticType)));
 
             Assert.Equal(
-                "The type Quickwire.Tests.Subjects.TestObjects+StaticType must have exactly one public constructor.",
+                "The type Quickwire.Tests.ServiceActivatorTests+StaticType must have exactly one public constructor.",
                 exception.Message);
         }
 
@@ -218,7 +218,7 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryMethodInfo_ParameterInjection()
         {
-            object resultObject = _activator.GetFactory(GetMethod(nameof(TestMethods.ParameterInjection)))(_serviceProvider);
+            object resultObject = _activator.GetFactory(GetMethod(nameof(Methods.ParameterInjection)))(_serviceProvider);
             string result = resultObject as string;
 
             Assert.Equal("Default", result);
@@ -227,7 +227,7 @@ namespace Quickwire.Tests
         [Fact]
         public void GetFactoryMethodInfo_ParameterCustomInjection()
         {
-            object resultObject = _activator.GetFactory(GetMethod(nameof(TestMethods.ParameterCustomInjection)))(_serviceProvider);
+            object resultObject = _activator.GetFactory(GetMethod(nameof(Methods.ParameterCustomInjection)))(_serviceProvider);
             string result = resultObject as string;
 
             Assert.Equal("Custom Dependency", result);
@@ -237,13 +237,13 @@ namespace Quickwire.Tests
         public void GetFactoryMethodInfo_InstanceMethod()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                _activator.GetFactory(GetMethod(nameof(TestMethods.InstanceMethod))));
+                _activator.GetFactory(GetMethod(nameof(Methods.InstanceMethod))));
         }
 
         [Fact]
         public void GetFactoryMethodInfo_InternalMethod()
         {
-            object resultObject = _activator.GetFactory(GetMethod(nameof(TestMethods.InternalMethod)))(_serviceProvider);
+            object resultObject = _activator.GetFactory(GetMethod(nameof(Methods.InternalMethod)))(_serviceProvider);
             string result = resultObject as string;
 
             Assert.Equal("Default", result);
@@ -262,11 +262,11 @@ namespace Quickwire.Tests
         public void GetFactoryMethodInfo_UnresolvableParameterInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                _activator.GetFactory(GetMethod(nameof(TestMethods.UnresolvableParameterInjection)))(_serviceProvider));
+                _activator.GetFactory(GetMethod(nameof(Methods.UnresolvableParameterInjection)))(_serviceProvider));
         }
 
         private MethodInfo GetMethod(string name) =>
-            typeof(TestMethods).GetMethod(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            typeof(Methods).GetMethod(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
         #endregion
     }

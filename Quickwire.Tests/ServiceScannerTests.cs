@@ -16,12 +16,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Quickwire.Tests.Subjects;
+using Quickwire.Tests.TestImplementations;
 using Xunit;
 
 namespace Quickwire.Tests
 {
-    public class ServiceScannerTests
+    public partial class ServiceScannerTests
     {
         private readonly ServiceCollection _services;
         private readonly IServiceProvider _serviceProvider;
@@ -39,20 +39,20 @@ namespace Quickwire.Tests
         public void ScanServiceRegistrations_TypeRegistered()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanServiceRegistrations(typeof(TestTypes.TypeRegistered), _serviceProvider)
+                .ScanServiceRegistrations(typeof(TypeRegistered), _serviceProvider)
                 .ToList();
 
             Assert.Single(result);
-            Assert.Equal(typeof(TestTypes.TypeRegistered), result[0].ServiceType);
+            Assert.Equal(typeof(TypeRegistered), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
-            Assert.Equal(nameof(TestTypes.TypeRegistered), result[0].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(TypeRegistered), result[0].ImplementationFactory(_serviceProvider));
         }
 
         [Fact]
         public void ScanServiceRegistrations_TypeNotRegistered()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanServiceRegistrations(typeof(TestTypes.TypeNotRegistered), _serviceProvider)
+                .ScanServiceRegistrations(typeof(TypeNotRegistered), _serviceProvider)
                 .ToList();
 
             Assert.Empty(result);
@@ -62,20 +62,20 @@ namespace Quickwire.Tests
         public void ScanServiceRegistrations_SpecifyServiceType()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanServiceRegistrations(typeof(TestTypes.SpecifyServiceType), _serviceProvider)
+                .ScanServiceRegistrations(typeof(SpecifyServiceType), _serviceProvider)
                 .ToList();
 
             Assert.Single(result);
             Assert.Equal(typeof(IDisposable), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
-            Assert.Equal(nameof(TestTypes.SpecifyServiceType), result[0].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(SpecifyServiceType), result[0].ImplementationFactory(_serviceProvider));
         }
 
         [Fact]
         public void ScanServiceRegistrations_CanScan()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanServiceRegistrations(typeof(TestTypes.CanScan), _serviceProvider)
+                .ScanServiceRegistrations(typeof(CanScan), _serviceProvider)
                 .ToList();
 
             Assert.Single(result);
@@ -85,7 +85,7 @@ namespace Quickwire.Tests
         public void ScanServiceRegistrations_CannotScan()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanServiceRegistrations(typeof(TestTypes.CannotScan), _serviceProvider)
+                .ScanServiceRegistrations(typeof(CannotScan), _serviceProvider)
                 .ToList();
 
             Assert.Empty(result);
@@ -95,7 +95,7 @@ namespace Quickwire.Tests
         public void ScanServiceRegistrations_StaticType()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanServiceRegistrations(typeof(TestTypes.StaticType), _serviceProvider)
+                .ScanServiceRegistrations(typeof(StaticType), _serviceProvider)
                 .ToList();
 
             Assert.Empty(result);
@@ -109,20 +109,20 @@ namespace Quickwire.Tests
         public void ScanFactoryRegistrations_FactoryRegistered()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanFactoryRegistrations(typeof(TestTypes.FactoryRegistered), _serviceProvider)
+                .ScanFactoryRegistrations(typeof(FactoryRegistered), _serviceProvider)
                 .ToList();
 
             Assert.Single(result);
             Assert.Equal(typeof(string), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
-            Assert.Equal(nameof(TestTypes.FactoryRegistered.Factory1), result[0].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(FactoryRegistered.Factory1), result[0].ImplementationFactory(_serviceProvider));
         }
 
         [Fact]
         public void ScanFactoryRegistrations_FactoryNotRegistered()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanFactoryRegistrations(typeof(TestTypes.FactoryNotRegistered), _serviceProvider)
+                .ScanFactoryRegistrations(typeof(FactoryNotRegistered), _serviceProvider)
                 .ToList();
 
             Assert.Empty(result);
@@ -132,65 +132,65 @@ namespace Quickwire.Tests
         public void ScanFactoryRegistrations_MultipleFactoriesRegistered()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanFactoryRegistrations(typeof(TestTypes.MultipleFactoriesRegistered), _serviceProvider)
+                .ScanFactoryRegistrations(typeof(MultipleFactoriesRegistered), _serviceProvider)
                 .ToList();
 
             Assert.Equal(2, result.Count);
             Assert.Equal(typeof(string), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Singleton, result[0].Lifetime);
-            Assert.Equal(nameof(TestTypes.MultipleFactoriesRegistered.Factory1), result[0].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(MultipleFactoriesRegistered.Factory1), result[0].ImplementationFactory(_serviceProvider));
             Assert.Equal(typeof(string), result[1].ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, result[1].Lifetime);
-            Assert.Equal(nameof(TestTypes.MultipleFactoriesRegistered.Factory2), result[1].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(MultipleFactoriesRegistered.Factory2), result[1].ImplementationFactory(_serviceProvider));
         }
 
         [Fact]
         public void ScanFactoryRegistrations_SpecifyFactoryType()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanFactoryRegistrations(typeof(TestTypes.SpecifyFactoryType), _serviceProvider)
+                .ScanFactoryRegistrations(typeof(SpecifyFactoryType), _serviceProvider)
                 .ToList();
 
             Assert.Single(result);
             Assert.Equal(typeof(IDisposable), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
-            Assert.Equal(nameof(TestTypes.FactoryRegistered.Factory1), result[0].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(FactoryRegistered.Factory1), result[0].ImplementationFactory(_serviceProvider));
         }
 
         [Fact]
         public void ScanFactoryRegistrations_CannotScanFactory()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanFactoryRegistrations(typeof(TestTypes.CannotScanFactory), _serviceProvider)
+                .ScanFactoryRegistrations(typeof(CannotScanFactory), _serviceProvider)
                 .ToList();
 
             Assert.Equal(2, result.Count);
             Assert.Equal(typeof(string), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Singleton, result[0].Lifetime);
-            Assert.Equal(nameof(TestTypes.CannotScanFactory.Factory1), result[0].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(CannotScanFactory.Factory1), result[0].ImplementationFactory(_serviceProvider));
             Assert.Equal(typeof(string), result[1].ServiceType);
             Assert.Equal(ServiceLifetime.Transient, result[1].Lifetime);
-            Assert.Equal(nameof(TestTypes.CannotScanFactory.Factory3), result[1].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(CannotScanFactory.Factory3), result[1].ImplementationFactory(_serviceProvider));
         }
 
         [Fact]
         public void ScanFactoryRegistrations_CanScanClass()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanFactoryRegistrations(typeof(TestTypes.CanScanClass), _serviceProvider)
+                .ScanFactoryRegistrations(typeof(CanScanClass), _serviceProvider)
                 .ToList();
 
             Assert.Single(result);
             Assert.Equal(typeof(string), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
-            Assert.Equal(nameof(TestTypes.CanScanClass.Factory1), result[0].ImplementationFactory(_serviceProvider));
+            Assert.Equal(nameof(CanScanClass.Factory1), result[0].ImplementationFactory(_serviceProvider));
         }
 
         [Fact]
         public void ScanFactoryRegistrations_CannotScanClass()
         {
             List<ServiceDescriptor> result = ServiceScanner
-                .ScanFactoryRegistrations(typeof(TestTypes.CannotScanClass), _serviceProvider)
+                .ScanFactoryRegistrations(typeof(CannotScanClass), _serviceProvider)
                 .ToList();
 
             Assert.Empty(result);

@@ -13,15 +13,20 @@
 // limitations under the License.
 
 using System;
-using Quickwire.Attributes;
+using System.Reflection;
 
-namespace Quickwire.Tests.Subjects
+namespace Quickwire.Tests.TestImplementations
 {
-    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class TestDependencyResolverAttribute : Attribute, IDependencyResolver
+    public class MockServiceActivator : IServiceActivator
     {
-        public string Value { get; set; }
+        public Func<IServiceProvider, object> GetFactory(MethodInfo methodInfo)
+        {
+            return _ => methodInfo.Name;
+        }
 
-        public object Resolve(IServiceProvider serviceProvider, Type type) => new Dependency(Value);
+        public Func<IServiceProvider, object> GetFactory(Type type)
+        {
+            return _ => type.Name;
+        }
     }
 }
