@@ -19,9 +19,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Quickwire.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class InjectSettingAttribute : Attribute, IDependencyResolver
+    public class InjectConfigurationAttribute : Attribute, IDependencyResolver
     {
-        public InjectSettingAttribute(string configurationKey)
+        public InjectConfigurationAttribute(string configurationKey)
         {
             ConfigurationKey = configurationKey;
         }
@@ -31,8 +31,14 @@ namespace Quickwire.Attributes
         public object Resolve(IServiceProvider serviceProvider, Type type)
         {
             IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            string value = configuration[ConfigurationKey];
 
-            return configuration[ConfigurationKey];
+            if (type == typeof(TimeSpan))
+                return TimeSpan.Parse(value);
+            else if (type.IsEnum)
+                return Enum.Parse(type, value);
+            else
+                return Convert.ChangeType(configuration[ConfigurationKey], type);
         }
     }
 }
