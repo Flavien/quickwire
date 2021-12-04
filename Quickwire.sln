@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quickwire", "Quickwire\Quickwire.csproj", "{06940FF4-E185-4C45-9969-E4A4CE3E5F3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quickwire", "src\Quickwire\Quickwire.csproj", "{06940FF4-E185-4C45-9969-E4A4CE3E5F3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quickwire.Tests", "Quickwire.Tests\Quickwire.Tests.csproj", "{69C2EBFA-907C-4E00-AA06-5C5A6071BC2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quickwire.Tests", "test\Quickwire.Tests\Quickwire.Tests.csproj", "{69C2EBFA-907C-4E00-AA06-5C5A6071BC2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

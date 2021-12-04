@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Quickwire\Quickwire.csproj" />
+    <ProjectReference Include="..\..\src\Quickwire\Quickwire.csproj" />
   </ItemGroup>
 
   <ItemGroup>
