@@ -74,8 +74,7 @@ namespace Quickwire
                 default:
                     if (services.Any(service => service.ServiceType == serviceDescriptor.ServiceType))
                         throw new ArgumentException(
-                            $"The service of type {serviceDescriptor.ServiceType.FullName} has already been added.",
-                            nameof(serviceDescriptor));
+                            $"The service of type {serviceDescriptor.ServiceType.FullName} has already been added.");
 
                     services.Replace(serviceDescriptor);
                     break;

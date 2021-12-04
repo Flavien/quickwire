@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
@@ -22,6 +23,13 @@ namespace Quickwire.Tests
         [RegisterService(ServiceLifetime.Scoped)]
         public class TypeRegistered { }
 
-        public class TypeNotRegistered { }
+        public class FactoryRegistered
+        {
+            [RegisterFactory(ServiceLifetime.Scoped)]
+            public static string Factory1() => "";
+        }
+
+        [RegisterService(ServiceLifetime.Scoped, ServiceType = typeof(IComparable))]
+        public class Merge { }
     }
 }
