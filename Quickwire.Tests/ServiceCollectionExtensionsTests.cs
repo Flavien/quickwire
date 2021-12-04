@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Tests.Implementations;
 using Xunit;
@@ -35,7 +36,7 @@ namespace Quickwire.Tests
         [Fact]
         public void ScanServiceRegistrations_TypeRegistered()
         {
-            _services.ScanType(typeof(TypeRegistered));
+            _services.ScanType(typeof(TypeRegistered), ServiceDescriptorMergeStrategy.Throw);
 
             Assert.Equal(3, _services.Count);
             ServiceDescriptor descriptor = _services[2];
@@ -47,7 +48,7 @@ namespace Quickwire.Tests
         [Fact]
         public void ScanServiceRegistrations_FactoryRegistered()
         {
-            _services.ScanType(typeof(FactoryRegistered));
+            _services.ScanType(typeof(FactoryRegistered), ServiceDescriptorMergeStrategy.Throw);
 
             Assert.Equal(3, _services.Count);
             ServiceDescriptor descriptor = _services[2];
@@ -93,6 +94,18 @@ namespace Quickwire.Tests
             Assert.Equal(typeof(IComparable), descriptor.ServiceType);
             Assert.Equal(ServiceLifetime.Singleton, descriptor.Lifetime);
             Assert.Equal("Default", descriptor.ImplementationFactory(_serviceProvider));
+        }
+
+        [Fact]
+        public void ScanCurrentAssembly_Success()
+        {
+            _services.ScanCurrentAssembly();
+
+            Assert.True(_services.Count > 2);
+            ServiceDescriptor descriptor = _services.First(service => service.ServiceType == typeof(TypeRegistered));
+            Assert.Equal(typeof(TypeRegistered), descriptor.ServiceType);
+            Assert.Equal(ServiceLifetime.Scoped, descriptor.Lifetime);
+            Assert.Equal(nameof(TypeRegistered), descriptor.ImplementationFactory(_serviceProvider));
         }
     }
 }
