@@ -101,6 +101,16 @@ namespace Quickwire.Tests
         }
 
         [Fact]
+        public void GetFactoryType_ConstructorCustomInjection()
+        {
+            object resultObject = _activator.GetFactory(typeof(ConstructorCustomInjection))(_serviceProvider);
+            ConstructorCustomInjection result = resultObject as ConstructorCustomInjection;
+
+            Assert.NotNull(result);
+            Assert.Equal("Custom Dependency", result.Dependency.Value);
+        }
+
+        [Fact]
         public void GetFactoryType_UnresolvableConstructorInjection()
         {
             Assert.Throws<InvalidOperationException>(() =>
@@ -130,10 +140,10 @@ namespace Quickwire.Tests
         }
 
         [Fact]
-        public void GetFactoryType_CustomSetterInjection()
+        public void GetFactoryType_SetterCustomInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(CustomSetterInjection))(_serviceProvider);
-            CustomSetterInjection result = resultObject as CustomSetterInjection;
+            object resultObject = _activator.GetFactory(typeof(SetterCustomInjection))(_serviceProvider);
+            SetterCustomInjection result = resultObject as SetterCustomInjection;
 
             Assert.NotNull(result);
             Assert.Equal("Custom Dependency", result.DependencyGetSet.Value);

@@ -79,6 +79,17 @@ namespace Quickwire.Tests
             { }
         }
 
+        public class ConstructorCustomInjection
+        {
+            public ConstructorCustomInjection(
+                [TestDependencyResolver(Value = "Custom Dependency")] Dependency dependency)
+            {
+                Dependency = dependency;
+            }
+
+            public Dependency Dependency { get; }
+        }
+
         public class UnresolvableConstructorInjection
         {
             public UnresolvableConstructorInjection(StringComparer dependency)
@@ -100,7 +111,7 @@ namespace Quickwire.Tests
             public Dependency DependencyGetSet { get; set; }
         }
 
-        public class CustomSetterInjection
+        public class SetterCustomInjection
         {
             [TestDependencyResolver(Value = "Custom Dependency")]
             public Dependency DependencyGetSet { get; set; }
