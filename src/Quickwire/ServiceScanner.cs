@@ -32,6 +32,13 @@ namespace Quickwire
                 foreach (RegisterServiceAttribute registerAttribute in type.GetCustomAttributes<RegisterServiceAttribute>())
                 {
                     Type serviceType = registerAttribute.ServiceType ?? type;
+
+                    if (!type.IsAssignableTo(serviceType))
+                    {
+                        throw new ArgumentException(
+                            $"The concrete type {type.FullName} cannot be used to register service type {serviceType.FullName}.");
+                    }
+
                     yield return new ServiceDescriptor(
                         serviceType,
                         serviceActivator.GetFactory(type),
@@ -53,6 +60,14 @@ namespace Quickwire
                         foreach (RegisterFactoryAttribute registerAttribute in method.GetCustomAttributes<RegisterFactoryAttribute>())
                         {
                             Type serviceType = registerAttribute.ServiceType ?? method.ReturnType;
+
+                            if (!method.ReturnType.IsAssignableTo(serviceType))
+                            {
+                                throw new ArgumentException(
+                                    $"The method {method.Name} with return type {method.ReturnType} cannot be used " +
+                                    $"to register service type {serviceType.FullName}.");
+                            }
+
                             yield return new ServiceDescriptor(
                                 serviceType,
                                 serviceActivator.GetFactory(method),

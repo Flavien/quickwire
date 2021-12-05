@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Quickwire.Tests.Implementations;
 using Xunit;
 
@@ -29,6 +30,7 @@ namespace Quickwire.Tests
         {
             _services = new ServiceCollection();
             _services.AddSingleton<IServiceActivator>(new MockServiceActivator());
+            _services.AddSingleton<IHostEnvironment>(new MockHostEnvironment() { EnvironmentName = "NoExceptions" });
             _services.AddSingleton<IComparable>(_ => "Default");
             _serviceProvider = _services.BuildServiceProvider();
         }
@@ -38,8 +40,8 @@ namespace Quickwire.Tests
         {
             _services.ScanType(typeof(TypeRegistered), ServiceDescriptorMergeStrategy.Throw);
 
-            Assert.Equal(3, _services.Count);
-            ServiceDescriptor descriptor = _services[2];
+            Assert.Equal(4, _services.Count);
+            ServiceDescriptor descriptor = _services.Last();
             Assert.Equal(typeof(TypeRegistered), descriptor.ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, descriptor.Lifetime);
             Assert.Equal(nameof(TypeRegistered), descriptor.ImplementationFactory(_serviceProvider));
@@ -50,8 +52,8 @@ namespace Quickwire.Tests
         {
             _services.ScanType(typeof(FactoryRegistered), ServiceDescriptorMergeStrategy.Throw);
 
-            Assert.Equal(3, _services.Count);
-            ServiceDescriptor descriptor = _services[2];
+            Assert.Equal(4, _services.Count);
+            ServiceDescriptor descriptor = _services.Last();
             Assert.Equal(typeof(string), descriptor.ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, descriptor.Lifetime);
             Assert.Equal(nameof(FactoryRegistered.Factory1), descriptor.ImplementationFactory(_serviceProvider));
@@ -62,8 +64,8 @@ namespace Quickwire.Tests
         {
             _services.ScanType(typeof(Merge), ServiceDescriptorMergeStrategy.Replace);
 
-            Assert.Equal(2, _services.Count);
-            ServiceDescriptor descriptor = _services[1];
+            Assert.Equal(3, _services.Count);
+            ServiceDescriptor descriptor = _services.Last();
             Assert.Equal(typeof(IComparable), descriptor.ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, descriptor.Lifetime);
             Assert.Equal(nameof(Merge), descriptor.ImplementationFactory(_serviceProvider));
@@ -74,8 +76,8 @@ namespace Quickwire.Tests
         {
             _services.ScanType(typeof(Merge), ServiceDescriptorMergeStrategy.Skip);
 
-            Assert.Equal(2, _services.Count);
-            ServiceDescriptor descriptor = _services[1];
+            Assert.Equal(3, _services.Count);
+            ServiceDescriptor descriptor = _services.Last();
             Assert.Equal(typeof(IComparable), descriptor.ServiceType);
             Assert.Equal(ServiceLifetime.Singleton, descriptor.Lifetime);
             Assert.Equal("Default", descriptor.ImplementationFactory(_serviceProvider));
@@ -89,8 +91,8 @@ namespace Quickwire.Tests
 
             Assert.Equal($"The service of type System.IComparable has already been added.", exception.Message);
 
-            Assert.Equal(2, _services.Count);
-            ServiceDescriptor descriptor = _services[1];
+            Assert.Equal(3, _services.Count);
+            ServiceDescriptor descriptor = _services.Last();
             Assert.Equal(typeof(IComparable), descriptor.ServiceType);
             Assert.Equal(ServiceLifetime.Singleton, descriptor.Lifetime);
             Assert.Equal("Default", descriptor.ImplementationFactory(_serviceProvider));
@@ -101,7 +103,7 @@ namespace Quickwire.Tests
         {
             _services.ScanCurrentAssembly();
 
-            Assert.True(_services.Count > 2);
+            Assert.True(_services.Count > 3);
             ServiceDescriptor descriptor = _services.First(service => service.ServiceType == typeof(TypeRegistered));
             Assert.Equal(typeof(TypeRegistered), descriptor.ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, descriptor.Lifetime);

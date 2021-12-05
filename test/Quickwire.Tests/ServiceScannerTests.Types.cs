@@ -26,8 +26,15 @@ namespace Quickwire.Tests
 
         public class TypeNotRegistered { }
 
-        [RegisterService(ServiceLifetime.Scoped, ServiceType = typeof(IDisposable))]
-        public class SpecifyServiceType { }
+        [RegisterService(ServiceLifetime.Scoped, ServiceType = typeof(IComparable))]
+        public class SpecifyServiceType : IComparable
+        {
+            public int CompareTo(object obj) => throw new NotImplementedException();
+        }
+
+        [EnvironmentSelector(Disabled = new[] { "NoExceptions" })]
+        [RegisterService(ServiceLifetime.Scoped, ServiceType = typeof(IComparable))]
+        public class InvalidServiceType { }
 
         [TestServiceScanningFilter(Active = true)]
         [RegisterService(ServiceLifetime.Scoped)]
@@ -61,6 +68,13 @@ namespace Quickwire.Tests
         }
 
         public class SpecifyFactoryType
+        {
+            [RegisterFactory(ServiceLifetime.Scoped, ServiceType = typeof(IComparable))]
+            public static string Factory1() => "";
+        }
+
+        [EnvironmentSelector(Disabled = new[] { "NoExceptions" })]
+        public class InvalidFactoryType
         {
             [RegisterFactory(ServiceLifetime.Scoped, ServiceType = typeof(IDisposable))]
             public static string Factory1() => "";

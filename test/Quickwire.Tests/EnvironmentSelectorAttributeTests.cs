@@ -14,9 +14,9 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Quickwire.Attributes;
+using Quickwire.Tests.Implementations;
 using Xunit;
 
 namespace Quickwire.Tests
@@ -24,13 +24,11 @@ namespace Quickwire.Tests
     public class EnvironmentSelectorAttributeTests
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly TestHostEnvironment _hostEnvironment;
 
         public EnvironmentSelectorAttributeTests()
         {
-            _hostEnvironment = new TestHostEnvironment();
             ServiceCollection services = new ServiceCollection();
-            services.AddSingleton<IHostEnvironment>(_hostEnvironment);
+            services.AddSingleton<IHostEnvironment>(new MockHostEnvironment() { EnvironmentName = "B" });
             _serviceProvider = services.BuildServiceProvider();
         }
 
@@ -73,17 +71,6 @@ namespace Quickwire.Tests
             bool canScan = environmentSelector.CanScan(_serviceProvider);
 
             Assert.False(canScan);
-        }
-
-        private class TestHostEnvironment : IHostEnvironment
-        {
-            public string EnvironmentName { get; set; } = "B";
-
-            public string ApplicationName { get; set; }
-
-            public string ContentRootPath { get; set; }
-
-            public IFileProvider ContentRootFileProvider { get; set; }
         }
     }
 }

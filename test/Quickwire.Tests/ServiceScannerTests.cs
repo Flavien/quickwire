@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Quickwire.Tests.Implementations;
 using Xunit;
 
@@ -30,6 +31,7 @@ namespace Quickwire.Tests
         {
             _services = new ServiceCollection();
             _services.AddSingleton<IServiceActivator>(new MockServiceActivator());
+            _services.AddSingleton<IHostEnvironment>(new MockHostEnvironment());
             _serviceProvider = _services.BuildServiceProvider();
         }
 
@@ -66,9 +68,20 @@ namespace Quickwire.Tests
                 .ToList();
 
             Assert.Single(result);
-            Assert.Equal(typeof(IDisposable), result[0].ServiceType);
+            Assert.Equal(typeof(IComparable), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
             Assert.Equal(nameof(SpecifyServiceType), result[0].ImplementationFactory(_serviceProvider));
+        }
+
+        [Fact]
+        public void ScanServiceRegistrations_InvalidServiceType()
+        {
+            ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+                ServiceScanner.ScanServiceRegistrations(typeof(InvalidServiceType), _serviceProvider).ToList());
+
+            Assert.Equal(
+                "The concrete type Quickwire.Tests.ServiceScannerTests+InvalidServiceType cannot be used to register service type System.IComparable.",
+                exception.Message);
         }
 
         [Fact]
@@ -152,9 +165,20 @@ namespace Quickwire.Tests
                 .ToList();
 
             Assert.Single(result);
-            Assert.Equal(typeof(IDisposable), result[0].ServiceType);
+            Assert.Equal(typeof(IComparable), result[0].ServiceType);
             Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
             Assert.Equal(nameof(FactoryRegistered.Factory1), result[0].ImplementationFactory(_serviceProvider));
+        }
+
+        [Fact]
+        public void ScanFactoryRegistrations_InvalidFactoryType()
+        {
+            ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+                ServiceScanner.ScanFactoryRegistrations(typeof(InvalidFactoryType), _serviceProvider).ToList());
+
+            Assert.Equal(
+                "The method Factory1 with return type System.String cannot be used to register service type System.IDisposable.",
+                exception.Message);
         }
 
         [Fact]

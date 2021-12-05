@@ -30,6 +30,9 @@ namespace Quickwire.Tests
         }
 
         [RegisterService(ServiceLifetime.Scoped, ServiceType = typeof(IComparable))]
-        public class Merge { }
+        public class Merge : IComparable
+        {
+            public int CompareTo(object obj) => throw new NotImplementedException();
+        }
     }
 }
