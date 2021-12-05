@@ -44,7 +44,9 @@ namespace Quickwire.Tests
 
             object result = _injectConfiguration.Resolve(_serviceProvider, type);
 
-            Assert.IsType(type, result);
+            if (configurationValue != null)
+                Assert.IsAssignableFrom(type, result);
+
             Assert.Equal(expected, result);
         }
 
@@ -52,11 +54,14 @@ namespace Quickwire.Tests
             new List<object[]>
             {
                 new object[] { "value", typeof(string), "value" },
+                new object[] { null, typeof(string), null },
                 new object[] { "true", typeof(bool), true },
                 new object[] { "100", typeof(int), 100 },
                 new object[] { "100", typeof(long), 100L },
                 new object[] { "10.01", typeof(decimal), 10.01m },
                 new object[] { "10.01", typeof(double), 10.01d },
+                new object[] { null, typeof(int?), (int?)null },
+                new object[] { "100", typeof(int?), new Nullable<int>(100) },
                 new object[] { "08:50:15.500", typeof(TimeSpan), TimeSpan.FromSeconds(15.5 + 60 * (50 + 60 * 8)) },
                 new object[] { "2020-12-25T16:08:30", typeof(DateTime), new DateTime(2020, 12, 25, 16, 8, 30) },
                 new object[] { "Local", typeof(DateTimeKind), DateTimeKind.Local }

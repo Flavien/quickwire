@@ -28,11 +28,15 @@ namespace Quickwire.Attributes
 
         public string ConfigurationKey { get; set; }
 
-        public object Resolve(IServiceProvider serviceProvider, Type type)
+        public object? Resolve(IServiceProvider serviceProvider, Type type)
         {
             IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
             string value = configuration[ConfigurationKey];
 
+            Type? nullableOf = Nullable.GetUnderlyingType(type);
+
+            if (nullableOf != null)
+                return value == null ? null : Resolve(serviceProvider, nullableOf);
             if (type == typeof(TimeSpan))
                 return TimeSpan.Parse(value);
             else if (type.IsEnum)
