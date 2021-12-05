@@ -105,16 +105,27 @@ namespace Quickwire.Tests
             public Dependency DependencyGetInit { get; init; }
         }
 
-        public class SetterInjection
-        {
-            [InjectService]
-            public Dependency DependencyGetSet { get; set; }
-        }
-
         public class SetterCustomInjection
         {
             [TestDependencyResolver(Value = "Custom Dependency")]
             public Dependency DependencyGetSet { get; set; }
+        }
+
+        public class NonPublicSetterCustomInjection
+        {
+            [TestDependencyResolver(Value = "Custom Dependency 1")]
+            private Dependency DependencyGetSet1 { get; set; }
+
+            [TestDependencyResolver(Value = "Custom Dependency 2")]
+            public Dependency DependencyGetSet2 { get; private set; }
+
+            [TestDependencyResolver(Value = "Custom Dependency 3")]
+            public Dependency DependencyGetSet3 { get; protected set; }
+
+            [TestDependencyResolver(Value = "Custom Dependency 4")]
+            public Dependency DependencyGetSet4 { get; internal set; }
+
+            public Dependency GetDependencyGetSet1() => DependencyGetSet1;
         }
 
         [InjectAllInitOnlyProperties]
@@ -128,44 +139,10 @@ namespace Quickwire.Tests
         }
 
         [InjectAllInitOnlyProperties]
-        public class InitOnlyCustomSetterInjection
+        public class InitOnlySetterCustomInjection
         {
-            public Dependency DependencyGetInit1 { get; init; }
-
-            [InjectService]
-            public Dependency DependencyGetInit2 { get; init; }
-
             [TestDependencyResolver(Value = "Custom Dependency")]
-            public Dependency DependencyGetInit3 { get; init; }
-        }
-
-        public class NonPublicSetter
-        {
-            [InjectService]
-            private Dependency DependencyGetSet1 { get; set; }
-
-            [InjectService]
-            public Dependency DependencyGetSet2 { get; private set; }
-
-            [InjectService]
-            public Dependency DependencyGetSet3 { get; protected set; }
-
-            [InjectService]
-            public Dependency DependencyGetSet4 { get; internal set; }
-
-            public Dependency GetDependencyGetSet1() => DependencyGetSet1;
-        }
-
-        public class UnresolvableSetterInjection
-        {
-            [InjectService]
-            public StringComparer DependencyGetSet { get; set; }
-        }
-
-        public class OptionalSetterInjection
-        {
-            [InjectService(Optional = true)]
-            public StringComparer DependencyGetSet { get; set; }
+            public Dependency DependencyGetInit { get; init; }
         }
 
         [InjectAllInitOnlyProperties]

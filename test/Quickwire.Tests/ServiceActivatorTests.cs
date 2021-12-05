@@ -130,16 +130,6 @@ namespace Quickwire.Tests
         }
 
         [Fact]
-        public void GetFactoryType_SetterInjection()
-        {
-            object resultObject = _activator.GetFactory(typeof(SetterInjection))(_serviceProvider);
-            SetterInjection result = resultObject as SetterInjection;
-
-            Assert.NotNull(result);
-            Assert.Equal(_dependency, result.DependencyGetSet);
-        }
-
-        [Fact]
         public void GetFactoryType_SetterCustomInjection()
         {
             object resultObject = _activator.GetFactory(typeof(SetterCustomInjection))(_serviceProvider);
@@ -147,6 +137,19 @@ namespace Quickwire.Tests
 
             Assert.NotNull(result);
             Assert.Equal("Custom Dependency", result.DependencyGetSet.Value);
+        }
+
+        [Fact]
+        public void GetFactoryType_NonPublicSetterCustomInjection()
+        {
+            object resultObject = _activator.GetFactory(typeof(NonPublicSetterCustomInjection))(_serviceProvider);
+            NonPublicSetterCustomInjection result = resultObject as NonPublicSetterCustomInjection;
+
+            Assert.NotNull(result);
+            Assert.Equal("Custom Dependency 1", result.GetDependencyGetSet1().Value);
+            Assert.Equal("Custom Dependency 2", result.DependencyGetSet2.Value);
+            Assert.Equal("Custom Dependency 3", result.DependencyGetSet3.Value);
+            Assert.Equal("Custom Dependency 4", result.DependencyGetSet4.Value);
         }
 
         [Fact]
@@ -162,45 +165,13 @@ namespace Quickwire.Tests
         }
 
         [Fact]
-        public void GetFactoryType_InitOnlyCustomSetterInjection()
+        public void GetFactoryType_InitOnlySetterCustomInjection()
         {
-            object resultObject = _activator.GetFactory(typeof(InitOnlyCustomSetterInjection))(_serviceProvider);
-            InitOnlyCustomSetterInjection result = resultObject as InitOnlyCustomSetterInjection;
+            object resultObject = _activator.GetFactory(typeof(InitOnlySetterCustomInjection))(_serviceProvider);
+            InitOnlySetterCustomInjection result = resultObject as InitOnlySetterCustomInjection;
 
             Assert.NotNull(result);
-            Assert.Equal(_dependency, result.DependencyGetInit1);
-            Assert.Equal(_dependency, result.DependencyGetInit2);
-            Assert.Equal("Custom Dependency", result.DependencyGetInit3.Value);
-        }
-
-        [Fact]
-        public void GetFactoryType_NonPublicSetter()
-        {
-            object resultObject = _activator.GetFactory(typeof(NonPublicSetter))(_serviceProvider);
-            NonPublicSetter result = resultObject as NonPublicSetter;
-
-            Assert.NotNull(result);
-            Assert.Equal(_dependency, result.GetDependencyGetSet1());
-            Assert.Equal(_dependency, result.DependencyGetSet2);
-            Assert.Equal(_dependency, result.DependencyGetSet3);
-            Assert.Equal(_dependency, result.DependencyGetSet4);
-        }
-
-        [Fact]
-        public void GetFactoryType_UnresolvableSetterInjection()
-        {
-            Assert.Throws<InvalidOperationException>(() =>
-                _activator.GetFactory(typeof(UnresolvableSetterInjection))(_serviceProvider));
-        }
-
-        [Fact]
-        public void GetFactoryType_OptionalSetterInjection()
-        {
-            object resultObject = _activator.GetFactory(typeof(OptionalSetterInjection))(_serviceProvider);
-            OptionalSetterInjection result = resultObject as OptionalSetterInjection;
-
-            Assert.NotNull(result);
-            Assert.Null(result.DependencyGetSet);
+            Assert.Equal("Custom Dependency", result.DependencyGetInit.Value);
         }
 
         [Fact]
