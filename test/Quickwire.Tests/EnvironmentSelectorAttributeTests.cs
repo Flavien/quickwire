@@ -32,16 +32,6 @@ namespace Quickwire.Tests
             _serviceProvider = services.BuildServiceProvider();
         }
 
-        [Fact]
-        public void CanScan_Default()
-        {
-            EnvironmentSelectorAttribute environmentSelector = new EnvironmentSelectorAttribute();
-
-            bool canScan = environmentSelector.CanScan(_serviceProvider);
-
-            Assert.True(canScan);
-        }
-
         [Theory]
         [InlineData(null, null)]
         [InlineData("B", null)]
