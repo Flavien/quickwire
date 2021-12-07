@@ -18,6 +18,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Quickwire.Attributes
 {
+    /// <summary>
+    /// Indicates that a parameter or property should be bound using a configuration setting coming from the
+    /// <see cref="IConfiguration"/> service.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class InjectConfigurationAttribute : Attribute, IDependencyResolver
     {
@@ -26,6 +30,9 @@ namespace Quickwire.Attributes
             ConfigurationKey = configurationKey;
         }
 
+        /// <summary>
+        /// Gets or sets the configuration key to use.
+        /// </summary>
         public string ConfigurationKey { get; set; }
 
         public object? Resolve(IServiceProvider serviceProvider, Type type)

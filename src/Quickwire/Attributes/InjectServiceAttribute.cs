@@ -17,9 +17,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Quickwire.Attributes
 {
+    /// <summary>
+    /// Indicates that a parameter or property should be bound using dependency injection resolution.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class InjectServiceAttribute : Attribute, IDependencyResolver
     {
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether the service is required or optional.
+        /// </summary>
         public bool Optional { get; set; }
 
         public object? Resolve(IServiceProvider serviceProvider, Type type)

@@ -17,6 +17,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Quickwire.Attributes
 {
+    /// <summary>
+    /// Indicates that a method is a factory producing a service that can be used for dependency injection.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public class RegisterFactoryAttribute : Attribute
     {
@@ -25,8 +28,14 @@ namespace Quickwire.Attributes
             Scope = scope;
         }
 
+        /// <summary>
+        /// The lifetime of the service.
+        /// </summary>
         public ServiceLifetime Scope { get; set; }
 
+        /// <summary>
+        /// The type of the service.
+        /// </summary>
         public Type? ServiceType { get; set; }
     }
 }

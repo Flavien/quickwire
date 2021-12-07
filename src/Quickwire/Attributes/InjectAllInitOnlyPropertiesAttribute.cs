@@ -16,6 +16,10 @@ using System;
 
 namespace Quickwire.Attributes
 {
+    /// <summary>
+    /// Indicates that all the init-only properties in a class should automatically be bound using dependency
+    /// injection.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class InjectAllInitOnlyPropertiesAttribute : Attribute
     { }

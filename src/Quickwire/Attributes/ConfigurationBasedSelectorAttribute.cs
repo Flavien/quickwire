@@ -18,6 +18,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Quickwire.Attributes
 {
+    /// <summary>
+    /// Indicates that a type or method should be excluded or included from dependency injection registration based
+    /// on a configuration setting coming from the <see cref="IConfiguration"/> service.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class ConfigurationBasedSelectorAttribute : Attribute, IServiceScanningFilter
     {

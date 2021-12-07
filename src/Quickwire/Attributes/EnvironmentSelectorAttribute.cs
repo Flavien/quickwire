@@ -19,6 +19,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace Quickwire.Attributes
 {
+    /// <summary>
+    /// Indicates that a type or method should be excluded or included from dependency injection registration based on
+    /// the current environment specified throught the <see cref="IHostEnvironment"/> service.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class EnvironmentSelectorAttribute : Attribute, IServiceScanningFilter
     {
