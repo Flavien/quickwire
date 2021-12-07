@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>1.0.0</VersionPrefix>
     <Title>Quickwire</Title>
     <Description>Attribute-based dependency injection for .NET.</Description>
     <Authors>Flavien Charlon</Authors>
