@@ -6,9 +6,9 @@ Attribute-based dependency injection for .NET.
 ## Features
 
 - Register services for dependency injection using attributes and reduce boilerplate code.
-- Uses the built-in .NET dependency injection container. No need to use a third party container or to change your exising code.
+- Uses the built-in .NET dependency injection container. No need to use a third party container or to change your existing code.
 - Full support for property injection.
-- Inject configuration settings semlessly into your services.
+- Inject configuration settings seamlessly into your services.
 - Use configuration selectors to register different implementations based on the current environment.
 
 ## Quick start
@@ -58,13 +58,13 @@ The attribute takes a parameter of type `ServiceLifetime` to specify the lifetim
 
 By default, Quickwire will use the public constructor to instantiate the concrete type. There must be exactly one public constructor available or an exception will be thrown.
 
-If there are more than one public constructor, or if a non-public constructor should be used, the `[ServiceConstructor]` should be applied to indicate explicitely and unambiguously which constructor to use.
+If there are more than one public constructor, or if a non-public constructor should be used, the `[ServiceConstructor]` should be applied to indicate explicitly and unambiguously which constructor to use.
 
-By default, all the contructor parameters will be resolved using dependency injection, however it is also possible to decorate parameters using the `[InjectConfiguration]` attribute to inject a configuration setting. It is also possible to use `[InjectService(Optional = true)]` to make a dependency optional.
+By default, all the constructor parameters will be resolved using dependency injection, however it is also possible to decorate parameters using the `[InjectConfiguration]` attribute to inject a configuration setting. It is also possible to use `[InjectService(Optional = true)]` to make a dependency optional.
 
 ### Property injection
 
-Property injection can be achived by decorating a property with a setter with the `[InjectService]` attribute.
+Property injection can be achieved by decorating a property with a setter with the `[InjectService]` attribute.
 
 ```csharp
 [RegisterService(ServiceLifetime.Singleton)]
@@ -97,6 +97,17 @@ public class MyService
 When applying the `[RegisterFactory]` attribute to a static method, the static method will be registered as a factory used 
 
 By default, all the method parameters will be resolved using dependency injection, however it is also possible to decorate parameters using the `[InjectConfiguration]` attribute to inject a configuration setting. It is also possible to use `[InjectService(Optional = true)]` to make a dependency optional.
+
+```csharp
+public static class LoggingConfiguration
+{
+    [RegisterFactory(ServiceLifetime.Scoped)]
+    public static ILogger CreateLogger()
+    {
+        // ...
+    }
+}
+```
 
 ## Configuration setting injection
 
@@ -131,10 +142,58 @@ public class DebugFactories
 {
     // This is only registered in the Development environment
     [RegisterFactory(ServiceLifetime.Transient)]
-    public ILogger CreateDebugLogger()
+    public static ILogger CreateDebugLogger()
     {
         // ...
     }
+
+    // ...
+}
+```
+
+## Selection based on configuration
+
+It is possible to disable specific services or service factories based on the value of specific configuration settings using the `[ConfigurationBasedSelector]`.
+
+```csharp
+[ConfigurationBasedSelector("logging:mode", "debug")]
+public class DebugFactories
+{
+    // This is only registered if the logging:mode configuration setting is set to "debug"
+    [RegisterFactory(ServiceLifetime.Transient)]
+    public static ILogger CreateDebugLogger()
+    {
+        // ...
+    }
+
+    // ...
+}
+```
+
+## Using Quickwire with ASP.NET Core controllers
+
+By default, controllers in ASP.NET Core are not activated using the dependency injection container. ASP.NET Core does however offer a simple way to change that behavior. In the `Startup` class, in `ConfigureServices`, use the following extension method:
+
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    // Activate controllers using the dependency injection container
+    services.AddControllers().AddControllersAsServices();
+
+    services.ScanCurrentAssembly();
+}
+```
+
+Then decorate controllers as any other service:
+
+```csharp
+[ApiController]
+[Route("[controller]")]
+[RegisterService(ServiceLifetime.Transient)]
+public class ShoppingCartController : ControllerBase
+{
+    [InjectService]
+    public IShoppingCardRepository { get; init; }
 
     // ...
 }

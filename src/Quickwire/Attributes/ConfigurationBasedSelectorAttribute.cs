@@ -35,7 +35,7 @@ namespace Quickwire.Attributes
             IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
             string value = configuration[_configurationKey];
 
-            return StringComparer.Ordinal.Equals(value, _enabledIfEqualsTo);
+            return StringComparer.OrdinalIgnoreCase.Equals(value, _enabledIfEqualsTo);
         }
     }
 }
