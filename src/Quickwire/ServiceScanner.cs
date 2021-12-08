@@ -33,7 +33,7 @@ namespace Quickwire
                 {
                     Type serviceType = registerAttribute.ServiceType ?? type;
 
-                    if (!type.IsAssignableTo(serviceType))
+                    if (!serviceType.IsAssignableFrom(type))
                     {
                         throw new ArgumentException(
                             $"The concrete type {type.FullName} cannot be used to register service type {serviceType.FullName}.");
@@ -61,7 +61,7 @@ namespace Quickwire
                         {
                             Type serviceType = registerAttribute.ServiceType ?? method.ReturnType;
 
-                            if (!method.ReturnType.IsAssignableTo(serviceType))
+                            if (!serviceType.IsAssignableFrom(method.ReturnType))
                             {
                                 throw new ArgumentException(
                                     $"The method {method.Name} with return type {method.ReturnType} cannot be used " +

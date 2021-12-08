@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.1.0</VersionPrefix>
     <Title>Quickwire</Title>
     <Description>Attribute-based dependency injection for .NET.</Description>
     <Authors>Flavien Charlon</Authors>
@@ -10,7 +10,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -18,6 +19,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IsExternalInit" Version="1.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.21" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.21" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.21" />
