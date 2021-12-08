@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
@@ -64,7 +65,21 @@ namespace Quickwire.Tests
                 new object[] { "100", typeof(int?), new Nullable<int>(100) },
                 new object[] { "08:50:15.500", typeof(TimeSpan), TimeSpan.FromSeconds(15.5 + 60 * (50 + 60 * 8)) },
                 new object[] { "2020-12-25T16:08:30", typeof(DateTime), new DateTime(2020, 12, 25, 16, 8, 30) },
+                new object[] { "2020-12-25", typeof(DateOnly), new DateOnly(2020, 12, 25) },
+                new object[] { "13:14:15", typeof(TimeOnly), new TimeOnly(13, 14, 15, 0) },
+                new object[] { "127.0.0.1", typeof(IPAddress), new IPAddress(new byte[] { 127, 0, 0, 1 }) },
+                new object[] { "https://host/path?a=b", typeof(Uri), new Uri("https://host/path?a=b") },
+                new object[] { "23688849-6394-4492-86ee-3cc2ef5a992f", typeof(Guid), Guid.Parse("23688849-6394-4492-86ee-3cc2ef5a992f") },
                 new object[] { "Local", typeof(DateTimeKind), DateTimeKind.Local }
             };
+
+        [Fact]
+        public void Resolve_CannotConvert()
+        {
+            _configuration["key"] = "...";
+
+            Assert.Throws<InvalidCastException>(
+                () => _injectConfiguration.Resolve(_serviceProvider, typeof(StringComparer)));
+        }
     }
 }
