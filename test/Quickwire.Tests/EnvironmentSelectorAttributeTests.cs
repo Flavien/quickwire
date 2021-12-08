@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Tests;
+
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,48 +21,45 @@ using Quickwire.Attributes;
 using Quickwire.Tests.Implementations;
 using Xunit;
 
-namespace Quickwire.Tests
+public class EnvironmentSelectorAttributeTests
 {
-    public class EnvironmentSelectorAttributeTests
+    private readonly IServiceProvider _serviceProvider;
+
+    public EnvironmentSelectorAttributeTests()
     {
-        private readonly IServiceProvider _serviceProvider;
+        ServiceCollection services = new ServiceCollection();
+        services.AddSingleton<IHostEnvironment>(new MockHostEnvironment() { EnvironmentName = "B" });
+        _serviceProvider = services.BuildServiceProvider();
+    }
 
-        public EnvironmentSelectorAttributeTests()
-        {
-            ServiceCollection services = new ServiceCollection();
-            services.AddSingleton<IHostEnvironment>(new MockHostEnvironment() { EnvironmentName = "B" });
-            _serviceProvider = services.BuildServiceProvider();
-        }
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData("B", null)]
+    [InlineData("A,B,C", null)]
+    [InlineData("A,B,C", "D,E,F")]
+    public void CanScan_Enabled(string enabled, string disabled)
+    {
+        EnvironmentSelectorAttribute environmentSelector = new EnvironmentSelectorAttribute();
+        environmentSelector.Enabled = enabled == null ? null : enabled.Split(',');
+        environmentSelector.Disabled = disabled == null ? null : disabled.Split(',');
 
-        [Theory]
-        [InlineData(null, null)]
-        [InlineData("B", null)]
-        [InlineData("A,B,C", null)]
-        [InlineData("A,B,C", "D,E,F")]
-        public void CanScan_Enabled(string enabled, string disabled)
-        {
-            EnvironmentSelectorAttribute environmentSelector = new EnvironmentSelectorAttribute();
-            environmentSelector.Enabled = enabled == null ? null : enabled.Split(',');
-            environmentSelector.Disabled = disabled == null ? null : disabled.Split(',');
+        bool canScan = environmentSelector.CanScan(_serviceProvider);
 
-            bool canScan = environmentSelector.CanScan(_serviceProvider);
+        Assert.True(canScan);
+    }
 
-            Assert.True(canScan);
-        }
+    [Theory]
+    [InlineData(null, "B")]
+    [InlineData("D,E,F", "A,B,C")]
+    [InlineData("A,B,C", "A,B,C")]
+    public void CanScan_Disabled(string enabled, string disabled)
+    {
+        EnvironmentSelectorAttribute environmentSelector = new EnvironmentSelectorAttribute();
+        environmentSelector.Enabled = enabled == null ? null : enabled.Split(',');
+        environmentSelector.Disabled = disabled == null ? null : disabled.Split(',');
 
-        [Theory]
-        [InlineData(null, "B")]
-        [InlineData("D,E,F", "A,B,C")]
-        [InlineData("A,B,C", "A,B,C")]
-        public void CanScan_Disabled(string enabled, string disabled)
-        {
-            EnvironmentSelectorAttribute environmentSelector = new EnvironmentSelectorAttribute();
-            environmentSelector.Enabled = enabled == null ? null : enabled.Split(',');
-            environmentSelector.Disabled = disabled == null ? null : disabled.Split(',');
+        bool canScan = environmentSelector.CanScan(_serviceProvider);
 
-            bool canScan = environmentSelector.CanScan(_serviceProvider);
-
-            Assert.False(canScan);
-        }
+        Assert.False(canScan);
     }
 }

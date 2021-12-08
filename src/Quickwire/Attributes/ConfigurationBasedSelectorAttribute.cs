@@ -12,34 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Attributes;
+
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Quickwire.Attributes
+/// <summary>
+/// Indicates that a type or method should be excluded or included from dependency injection registration based
+/// on a configuration setting coming from the <see cref="IConfiguration"/> service.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+public class ConfigurationBasedSelectorAttribute : Attribute, IServiceScanningFilter
 {
-    /// <summary>
-    /// Indicates that a type or method should be excluded or included from dependency injection registration based
-    /// on a configuration setting coming from the <see cref="IConfiguration"/> service.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class ConfigurationBasedSelectorAttribute : Attribute, IServiceScanningFilter
+    private readonly string _configurationKey;
+    private readonly string _enabledIfEqualsTo;
+
+    public ConfigurationBasedSelectorAttribute(string configurationKey, string enabledIfEqualsTo)
     {
-        private readonly string _configurationKey;
-        private readonly string _enabledIfEqualsTo;
+        _configurationKey = configurationKey;
+        _enabledIfEqualsTo = enabledIfEqualsTo;
+    }
 
-        public ConfigurationBasedSelectorAttribute(string configurationKey, string enabledIfEqualsTo)
-        {
-            _configurationKey = configurationKey;
-            _enabledIfEqualsTo = enabledIfEqualsTo;
-        }
+    public bool CanScan(IServiceProvider serviceProvider)
+    {
+        IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        string value = configuration[_configurationKey];
 
-        public bool CanScan(IServiceProvider serviceProvider)
-        {
-            IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            string value = configuration[_configurationKey];
-
-            return StringComparer.OrdinalIgnoreCase.Equals(value, _enabledIfEqualsTo);
-        }
+        return StringComparer.OrdinalIgnoreCase.Equals(value, _enabledIfEqualsTo);
     }
 }

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,143 +22,149 @@ using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
-namespace Quickwire
+/// <summary>
+/// Represents a class that can construct factory methods based either on type constructors or static methods.
+/// </summary>
+public class ServiceActivator : IServiceActivator
 {
-    public class ServiceActivator : IServiceActivator
+    /// <summary>
+    /// Returns a factory method based on a static method.
+    /// </summary>
+    public Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
     {
-        public Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
+        if (!methodInfo.IsStatic)
+            throw new InvalidOperationException("Factory methods must be static.");
+
+        ParameterInfo[]? parameters = methodInfo.GetParameters();
+        IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
+
+        return delegate (IServiceProvider serviceProvider)
         {
-            if (!methodInfo.IsStatic)
-                throw new InvalidOperationException("Factory methods must be static.");
-
-            ParameterInfo[]? parameters = methodInfo.GetParameters();
-            IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
-
-            return delegate (IServiceProvider serviceProvider)
-            {
-                object?[] arguments = new object[parameters.Length];
-
-                for (int i = 0; i < parameters.Length; i++)
-                    arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
-
-                object? result = methodInfo.Invoke(null, arguments);
-
-                return result;
-            };
-        }
-
-        public Func<IServiceProvider, object> GetFactory(Type type)
-        {
-            ConstructorInfo constructor = GetConstructor(type);
-            ParameterInfo[] parameters = constructor.GetParameters();
-            IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
-            List<SetterInfo> setters = GetSetters(type);
-
-            return delegate (IServiceProvider serviceProvider)
-            {
-                object?[] arguments = new object[parameters.Length];
-
-                for (int i = 0; i < parameters.Length; i++)
-                    arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
-
-                object result = constructor.Invoke(arguments);
-
-                foreach (SetterInfo setter in setters)
-                {
-                    object? resolvedDependency = Resolve(serviceProvider, setter.ServiceType, setter.DependencyResolver);
-
-                    setter.Setter.Invoke(result, new[] { resolvedDependency });
-                }
-
-                return result;
-            };
-        }
-
-        private static ConstructorInfo GetConstructor(Type type)
-        {
-            ConstructorInfo[] constructors = type.GetConstructors(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            List<ConstructorInfo> primaryConstructor = constructors
-                .Where(constructor => constructor.IsDefined(typeof(ServiceConstructorAttribute), false))
-                .ToList();
-
-            if (primaryConstructor.Count == 1)
-            {
-                return primaryConstructor[0];
-            }
-            else if (primaryConstructor.Count > 1)
-            {
-                throw new ArgumentException(
-                    $"The type {type.FullName} has more than one constructor decorated with the " +
-                    $"[ServiceConstructor] attribute.");
-            }
-            else
-            {
-                List<ConstructorInfo> publicConstructors = constructors
-                    .Where(constructors => constructors.IsPublic)
-                    .ToList();
-
-                if (publicConstructors.Count == 1)
-                    return publicConstructors[0];
-                else
-                    throw new ArgumentException($"The type {type.FullName} must have exactly one public constructor.");
-            }
-        }
-
-        private static IDependencyResolver?[] GetParametersDependencyResolvers(ParameterInfo[] parameters)
-        {
-            IDependencyResolver?[] dependencyResolvers = new IDependencyResolver[parameters.Length];
+            object?[] arguments = new object[parameters.Length];
 
             for (int i = 0; i < parameters.Length; i++)
-                dependencyResolvers[i] = GetDependencyResolver(parameters[i]);
+                arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
 
-            return dependencyResolvers;
-        }
+            object? result = methodInfo.Invoke(null, arguments);
 
-        private static List<SetterInfo> GetSetters(Type type)
+            return result;
+        };
+    }
+
+    /// <summary>
+    /// Returns a factory method based on a type constructor.
+    /// </summary>
+    public Func<IServiceProvider, object> GetFactory(Type type)
+    {
+        ConstructorInfo constructor = GetConstructor(type);
+        ParameterInfo[] parameters = constructor.GetParameters();
+        IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
+        List<SetterInfo> setters = GetSetters(type);
+
+        return delegate (IServiceProvider serviceProvider)
         {
-            bool injectAllInitOnlyProperties = type.IsDefined(typeof(InjectAllInitOnlyPropertiesAttribute), true);
+            object?[] arguments = new object[parameters.Length];
 
-            List<SetterInfo> setters = new List<SetterInfo>();
-            PropertyInfo[] properties = type.GetProperties(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            for (int i = 0; i < parameters.Length; i++)
+                arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
 
-            foreach (PropertyInfo property in properties)
+            object result = constructor.Invoke(arguments);
+
+            foreach (SetterInfo setter in setters)
             {
-                IDependencyResolver? dependencyResolver = GetDependencyResolver(property);
-                MethodInfo? setter = property.SetMethod;
+                object? resolvedDependency = Resolve(serviceProvider, setter.ServiceType, setter.DependencyResolver);
 
-                if (setter != null)
-                {
-                    bool isInitOnly = setter.ReturnParameter
-                        .GetRequiredCustomModifiers()
-                        .Contains(typeof(IsExternalInit));
-
-                    if (dependencyResolver != null || (injectAllInitOnlyProperties && isInitOnly))
-                        setters.Add(new SetterInfo(property.PropertyType, setter, dependencyResolver));
-                }
+                setter.Setter.Invoke(result, new[] { resolvedDependency });
             }
 
-            return setters;
-        }
-
-        private static IDependencyResolver? GetDependencyResolver(ICustomAttributeProvider customAttributeProvider)
-        {
-            return customAttributeProvider
-                .GetCustomAttributes(typeof(IDependencyResolver), true)
-                .OfType<IDependencyResolver>()
-                .FirstOrDefault();
-        }
-
-        private static object? Resolve(IServiceProvider serviceProvider, Type serviceType, IDependencyResolver? dependencyResolver)
-        {
-            if (dependencyResolver == null)
-                return serviceProvider.GetRequiredService(serviceType);
-            else
-                return dependencyResolver.Resolve(serviceProvider, serviceType);
-        }
-
-        private record SetterInfo(Type ServiceType, MethodInfo Setter, IDependencyResolver? DependencyResolver);
+            return result;
+        };
     }
+
+    private static ConstructorInfo GetConstructor(Type type)
+    {
+        ConstructorInfo[] constructors = type.GetConstructors(
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        List<ConstructorInfo> primaryConstructor = constructors
+            .Where(constructor => constructor.IsDefined(typeof(ServiceConstructorAttribute), false))
+            .ToList();
+
+        if (primaryConstructor.Count == 1)
+        {
+            return primaryConstructor[0];
+        }
+        else if (primaryConstructor.Count > 1)
+        {
+            throw new ArgumentException(
+                $"The type {type.FullName} has more than one constructor decorated with the " +
+                $"[ServiceConstructor] attribute.");
+        }
+        else
+        {
+            List<ConstructorInfo> publicConstructors = constructors
+                .Where(constructors => constructors.IsPublic)
+                .ToList();
+
+            if (publicConstructors.Count == 1)
+                return publicConstructors[0];
+            else
+                throw new ArgumentException($"The type {type.FullName} must have exactly one public constructor.");
+        }
+    }
+
+    private static IDependencyResolver?[] GetParametersDependencyResolvers(ParameterInfo[] parameters)
+    {
+        IDependencyResolver?[] dependencyResolvers = new IDependencyResolver[parameters.Length];
+
+        for (int i = 0; i < parameters.Length; i++)
+            dependencyResolvers[i] = GetDependencyResolver(parameters[i]);
+
+        return dependencyResolvers;
+    }
+
+    private static List<SetterInfo> GetSetters(Type type)
+    {
+        bool injectAllInitOnlyProperties = type.IsDefined(typeof(InjectAllInitOnlyPropertiesAttribute), true);
+
+        List<SetterInfo> setters = new List<SetterInfo>();
+        PropertyInfo[] properties = type.GetProperties(
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        foreach (PropertyInfo property in properties)
+        {
+            IDependencyResolver? dependencyResolver = GetDependencyResolver(property);
+            MethodInfo? setter = property.SetMethod;
+
+            if (setter != null)
+            {
+                bool isInitOnly = setter.ReturnParameter
+                    .GetRequiredCustomModifiers()
+                    .Contains(typeof(IsExternalInit));
+
+                if (dependencyResolver != null || (injectAllInitOnlyProperties && isInitOnly))
+                    setters.Add(new SetterInfo(property.PropertyType, setter, dependencyResolver));
+            }
+        }
+
+        return setters;
+    }
+
+    private static IDependencyResolver? GetDependencyResolver(ICustomAttributeProvider customAttributeProvider)
+    {
+        return customAttributeProvider
+            .GetCustomAttributes(typeof(IDependencyResolver), true)
+            .OfType<IDependencyResolver>()
+            .FirstOrDefault();
+    }
+
+    private static object? Resolve(IServiceProvider serviceProvider, Type serviceType, IDependencyResolver? dependencyResolver)
+    {
+        if (dependencyResolver == null)
+            return serviceProvider.GetRequiredService(serviceType);
+        else
+            return dependencyResolver.Resolve(serviceProvider, serviceType);
+    }
+
+    private record SetterInfo(Type ServiceType, MethodInfo Setter, IDependencyResolver? DependencyResolver);
 }

@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Quickwire.Tests.Implementations
-{
-    public class Dependency
-    {
-        public Dependency(string value)
-        {
-            Value = value;
-        }
+namespace Quickwire.Tests.Implementations;
 
-        public string Value { get ; }
+public class Dependency
+{
+    public Dependency(string value)
+    {
+        Value = value;
     }
+
+    public string Value { get; }
 }

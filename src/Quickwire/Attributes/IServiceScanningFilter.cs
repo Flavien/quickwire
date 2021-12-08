@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Attributes;
+
 using System;
 
-namespace Quickwire.Attributes
+public interface IServiceScanningFilter
 {
-    public interface IServiceScanningFilter
-    {
-        bool CanScan(IServiceProvider serviceProvider);
-    }
+    bool CanScan(IServiceProvider serviceProvider);
 }

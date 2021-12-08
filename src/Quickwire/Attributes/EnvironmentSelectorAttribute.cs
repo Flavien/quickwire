@@ -12,36 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Attributes;
+
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Quickwire.Attributes
+/// <summary>
+/// Indicates that a type or method should be excluded or included from dependency injection registration based on
+/// the current environment specified throught the <see cref="IHostEnvironment"/> service.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+public class EnvironmentSelectorAttribute : Attribute, IServiceScanningFilter
 {
-    /// <summary>
-    /// Indicates that a type or method should be excluded or included from dependency injection registration based on
-    /// the current environment specified throught the <see cref="IHostEnvironment"/> service.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class EnvironmentSelectorAttribute : Attribute, IServiceScanningFilter
+    public string[]? Enabled { get; set; }
+
+    public string[]? Disabled { get; set; }
+
+    public bool CanScan(IServiceProvider serviceProvider)
     {
-        public string[]? Enabled { get; set; }
+        string environmentName = serviceProvider.GetRequiredService<IHostEnvironment>().EnvironmentName;
 
-        public string[]? Disabled { get; set; }
+        bool enabled = true;
+        if (Enabled != null)
+            enabled &= Enabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
 
-        public bool CanScan(IServiceProvider serviceProvider)
-        {
-            string environmentName = serviceProvider.GetRequiredService<IHostEnvironment>().EnvironmentName;
+        if (Disabled != null)
+            enabled &= !Disabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
 
-            bool enabled = true;
-            if (Enabled != null)
-                enabled &= Enabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
-
-            if (Disabled != null)
-                enabled &= !Disabled.Contains(environmentName, StringComparer.OrdinalIgnoreCase);
-
-            return enabled;
-        }
+        return enabled;
     }
 }

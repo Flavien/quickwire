@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Attributes;
+
 using System;
 
-namespace Quickwire.Attributes
-{
-    /// <summary>
-    /// Indicates which constructor should be used for instantiation when the type is activated for
-    /// dependency injection.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]
-    public class ServiceConstructorAttribute : Attribute
-    { }
-}
+/// <summary>
+/// Indicates which constructor should be used for instantiation when the type is activated for
+/// dependency injection.
+/// </summary>
+[AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]
+public class ServiceConstructorAttribute : Attribute
+{ }

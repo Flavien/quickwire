@@ -12,30 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Attributes;
+
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Quickwire.Attributes
+/// <summary>
+/// Indicates that a class is a service that can be used for dependency injection.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+public class RegisterServiceAttribute : Attribute
 {
-    /// <summary>
-    /// Indicates that a class is a service that can be used for dependency injection.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-    public class RegisterServiceAttribute : Attribute
+    public RegisterServiceAttribute(ServiceLifetime scope)
     {
-        public RegisterServiceAttribute(ServiceLifetime scope)
-        {
-            Scope = scope;
-        }
-
-        /// <summary>
-        /// The lifetime of the service.
-        /// </summary>
-        public ServiceLifetime Scope { get; set; }
-
-        /// <summary>
-        /// The type of the service.
-        /// </summary>
-        public Type? ServiceType { get; set; }
+        Scope = scope;
     }
+
+    /// <summary>
+    /// The lifetime of the service.
+    /// </summary>
+    public ServiceLifetime Scope { get; set; }
+
+    /// <summary>
+    /// The type of the service.
+    /// </summary>
+    public Type? ServiceType { get; set; }
 }

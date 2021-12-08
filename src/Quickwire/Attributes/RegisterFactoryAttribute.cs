@@ -12,30 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Attributes;
+
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Quickwire.Attributes
+/// <summary>
+/// Indicates that a method is a factory producing a service that can be used for dependency injection.
+/// </summary>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+public class RegisterFactoryAttribute : Attribute
 {
-    /// <summary>
-    /// Indicates that a method is a factory producing a service that can be used for dependency injection.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-    public class RegisterFactoryAttribute : Attribute
+    public RegisterFactoryAttribute(ServiceLifetime scope)
     {
-        public RegisterFactoryAttribute(ServiceLifetime scope)
-        {
-            Scope = scope;
-        }
-
-        /// <summary>
-        /// The lifetime of the service.
-        /// </summary>
-        public ServiceLifetime Scope { get; set; }
-
-        /// <summary>
-        /// The type of the service.
-        /// </summary>
-        public Type? ServiceType { get; set; }
+        Scope = scope;
     }
+
+    /// <summary>
+    /// The lifetime of the service.
+    /// </summary>
+    public ServiceLifetime Scope { get; set; }
+
+    /// <summary>
+    /// The type of the service.
+    /// </summary>
+    public Type? ServiceType { get; set; }
 }

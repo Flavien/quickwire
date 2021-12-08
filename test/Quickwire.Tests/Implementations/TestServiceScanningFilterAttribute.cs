@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Tests.Implementations;
+
 using System;
 using Quickwire.Attributes;
 
-namespace Quickwire.Tests.Implementations
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+public class TestServiceScanningFilterAttribute : Attribute, IServiceScanningFilter
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class TestServiceScanningFilterAttribute : Attribute, IServiceScanningFilter
-    {
-        public bool Active { get; set; }
+    public bool Active { get; set; }
 
-        public bool CanScan(IServiceProvider serviceProvider) => Active;
-    }
+    public bool CanScan(IServiceProvider serviceProvider) => Active;
 }

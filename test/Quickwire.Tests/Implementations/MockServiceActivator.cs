@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Tests.Implementations;
+
 using System;
 using System.Reflection;
 
-namespace Quickwire.Tests.Implementations
+public class MockServiceActivator : IServiceActivator
 {
-    public class MockServiceActivator : IServiceActivator
+    public Func<IServiceProvider, object> GetFactory(MethodInfo methodInfo)
     {
-        public Func<IServiceProvider, object> GetFactory(MethodInfo methodInfo)
-        {
-            return _ => methodInfo.Name;
-        }
+        return _ => methodInfo.Name;
+    }
 
-        public Func<IServiceProvider, object> GetFactory(Type type)
-        {
-            return _ => type.Name;
-        }
+    public Func<IServiceProvider, object> GetFactory(Type type)
+    {
+        return _ => type.Name;
     }
 }

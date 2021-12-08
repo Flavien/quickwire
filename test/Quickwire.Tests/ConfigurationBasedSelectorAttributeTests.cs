@@ -12,45 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Tests;
+
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 using Xunit;
 
-namespace Quickwire.Tests
+public class ConfigurationBasedSelectorAttributeTests
 {
-    public class ConfigurationBasedSelectorAttributeTests
+    private readonly IServiceProvider _serviceProvider;
+
+    public ConfigurationBasedSelectorAttributeTests()
     {
-        private readonly IServiceProvider _serviceProvider;
+        ServiceCollection services = new ServiceCollection();
+        IConfiguration configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
+        configuration["key"] = "value";
+        services.AddSingleton<IConfiguration>(configuration);
+        _serviceProvider = services.BuildServiceProvider();
+    }
 
-        public ConfigurationBasedSelectorAttributeTests()
-        {
-            ServiceCollection services = new ServiceCollection();
-            IConfiguration configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
-            configuration["key"] = "value";
-            services.AddSingleton<IConfiguration>(configuration);
-            _serviceProvider = services.BuildServiceProvider();
-        }
+    [Fact]
+    public void CanScan_Enabled()
+    {
+        ConfigurationBasedSelectorAttribute selector = new ConfigurationBasedSelectorAttribute("key", "value");
 
-        [Fact]
-        public void CanScan_Enabled()
-        {
-            ConfigurationBasedSelectorAttribute selector = new ConfigurationBasedSelectorAttribute("key", "value");
+        bool canScan = selector.CanScan(_serviceProvider);
 
-            bool canScan = selector.CanScan(_serviceProvider);
+        Assert.True(canScan);
+    }
 
-            Assert.True(canScan);
-        }
+    [Fact]
+    public void CanScan_Disabled()
+    {
+        ConfigurationBasedSelectorAttribute selector = new ConfigurationBasedSelectorAttribute("key", "no");
 
-        [Fact]
-        public void CanScan_Disabled()
-        {
-            ConfigurationBasedSelectorAttribute selector = new ConfigurationBasedSelectorAttribute("key", "no");
+        bool canScan = selector.CanScan(_serviceProvider);
 
-            bool canScan = selector.CanScan(_serviceProvider);
-
-            Assert.False(canScan);
-        }
+        Assert.False(canScan);
     }
 }

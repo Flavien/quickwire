@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Tests;
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -20,40 +22,38 @@ using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 using Xunit;
 
-namespace Quickwire.Tests
+public class InjectConfigurationAttributeTests
 {
-    public class InjectConfigurationAttributeTests
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IConfiguration _configuration;
+    private readonly InjectConfigurationAttribute _injectConfiguration;
+
+    public InjectConfigurationAttributeTests()
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IConfiguration _configuration;
-        private readonly InjectConfigurationAttribute _injectConfiguration;
+        ServiceCollection services = new ServiceCollection();
+        _configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
+        services.AddSingleton<IConfiguration>(_configuration);
+        _serviceProvider = services.BuildServiceProvider();
+        _injectConfiguration = new InjectConfigurationAttribute("key");
+    }
 
-        public InjectConfigurationAttributeTests()
+    [Theory]
+    [MemberData(nameof(ResolveData))]
+    public void Resolve_Success(string configurationValue, Type type, object expected)
+    {
+        _configuration["key"] = configurationValue;
+
+        object result = _injectConfiguration.Resolve(_serviceProvider, type);
+
+        if (configurationValue != null)
+            Assert.IsAssignableFrom(type, result);
+
+        Assert.Equal(expected, result);
+    }
+
+    public static IEnumerable<object[]> ResolveData =>
+        new List<object[]>
         {
-            ServiceCollection services = new ServiceCollection();
-            _configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
-            services.AddSingleton<IConfiguration>(_configuration);
-            _serviceProvider = services.BuildServiceProvider();
-            _injectConfiguration = new InjectConfigurationAttribute("key");
-        }
-
-        [Theory]
-        [MemberData(nameof(ResolveData))]
-        public void Resolve_Success(string configurationValue, Type type, object expected)
-        {
-            _configuration["key"] = configurationValue;
-
-            object result = _injectConfiguration.Resolve(_serviceProvider, type);
-
-            if (configurationValue != null)
-                Assert.IsAssignableFrom(type, result);
-
-            Assert.Equal(expected, result);
-        }
-
-        public static IEnumerable<object[]> ResolveData =>
-            new List<object[]>
-            {
                 new object[] { "value", typeof(string), "value" },
                 new object[] { null, typeof(string), null },
                 new object[] { "true", typeof(bool), true },
@@ -71,15 +71,14 @@ namespace Quickwire.Tests
                 new object[] { "https://host/path?a=b", typeof(Uri), new Uri("https://host/path?a=b") },
                 new object[] { "23688849-6394-4492-86ee-3cc2ef5a992f", typeof(Guid), Guid.Parse("23688849-6394-4492-86ee-3cc2ef5a992f") },
                 new object[] { "Local", typeof(DateTimeKind), DateTimeKind.Local }
-            };
+        };
 
-        [Fact]
-        public void Resolve_CannotConvert()
-        {
-            _configuration["key"] = "...";
+    [Fact]
+    public void Resolve_CannotConvert()
+    {
+        _configuration["key"] = "...";
 
-            Assert.Throws<InvalidCastException>(
-                () => _injectConfiguration.Resolve(_serviceProvider, typeof(StringComparer)));
-        }
+        Assert.Throws<InvalidCastException>(
+            () => _injectConfiguration.Resolve(_serviceProvider, typeof(StringComparer)));
     }
 }

@@ -91,6 +91,8 @@ dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 
 # Code style defaults
 dotnet_sort_system_directives_first = true
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_using_directive_placement = inside_namespace:suggestion
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = false
 csharp_preferred_modifier_order = public, private, protected, internal, static, extern, new, virtual, abstract, sealed, override, readonly, unsafe, volatile, async:warning

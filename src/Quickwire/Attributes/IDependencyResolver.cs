@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Attributes;
+
 using System;
 
-namespace Quickwire.Attributes
+public interface IDependencyResolver
 {
-    public interface IDependencyResolver
-    {
-        public abstract object? Resolve(IServiceProvider serviceProvider, Type type);
-    }
+    public abstract object? Resolve(IServiceProvider serviceProvider, Type type);
 }

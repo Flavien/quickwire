@@ -12,19 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Tests.Implementations;
+
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
-namespace Quickwire.Tests.Implementations
+public class MockHostEnvironment : IHostEnvironment
 {
-    public class MockHostEnvironment : IHostEnvironment
-    {
-        public string EnvironmentName { get; set; }
+    public string EnvironmentName { get; set; }
 
-        public string ApplicationName { get; set; }
+    public string ApplicationName { get; set; }
 
-        public string ContentRootPath { get; set; }
+    public string ContentRootPath { get; set; }
 
-        public IFileProvider ContentRootFileProvider { get; set; }
-    }
+    public IFileProvider ContentRootFileProvider { get; set; }
 }

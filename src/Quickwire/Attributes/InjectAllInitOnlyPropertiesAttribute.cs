@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Attributes;
+
 using System;
 
-namespace Quickwire.Attributes
-{
-    /// <summary>
-    /// Indicates that all the init-only properties in a class should automatically be bound using dependency
-    /// injection.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class InjectAllInitOnlyPropertiesAttribute : Attribute
-    { }
-}
+/// <summary>
+/// Indicates that all the init-only properties in a class should automatically be bound using dependency
+/// injection.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+public class InjectAllInitOnlyPropertiesAttribute : Attribute
+{ }

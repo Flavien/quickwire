@@ -12,27 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Tests;
+
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
-namespace Quickwire.Tests
+public partial class ServiceCollectionExtensionsTests
 {
-    public partial class ServiceCollectionExtensionsTests
+    [RegisterService(ServiceLifetime.Scoped)]
+    public class TypeRegistered { }
+
+    public class FactoryRegistered
     {
-        [RegisterService(ServiceLifetime.Scoped)]
-        public class TypeRegistered { }
+        [RegisterFactory(ServiceLifetime.Scoped)]
+        public static string Factory1() => "";
+    }
 
-        public class FactoryRegistered
-        {
-            [RegisterFactory(ServiceLifetime.Scoped)]
-            public static string Factory1() => "";
-        }
-
-        [RegisterService(ServiceLifetime.Scoped, ServiceType = typeof(IComparable))]
-        public class Merge : IComparable
-        {
-            public int CompareTo(object obj) => throw new NotImplementedException();
-        }
+    [RegisterService(ServiceLifetime.Scoped, ServiceType = typeof(IComparable))]
+    public class Merge : IComparable
+    {
+        public int CompareTo(object obj) => throw new NotImplementedException();
     }
 }

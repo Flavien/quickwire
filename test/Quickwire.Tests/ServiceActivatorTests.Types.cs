@@ -12,167 +12,166 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+namespace Quickwire.Tests;
+
 using System;
 using Quickwire.Attributes;
 using Quickwire.Tests.Implementations;
 
-namespace Quickwire.Tests
+public partial class ServiceActivatorTests
 {
-    public partial class ServiceActivatorTests
+    public record ConstructorInjection(Dependency Dependency1, string Dependency2);
+
+    public class MultipleConstructors
     {
-        public record ConstructorInjection(Dependency Dependency1, string Dependency2);
-
-        public class MultipleConstructors
+        public MultipleConstructors(Dependency dependency1, string dependency2)
         {
-            public MultipleConstructors(Dependency dependency1, string dependency2)
-            {
-                Dependency1 = dependency1;
-                Dependency2 = dependency2;
-            }
-
-            [ServiceConstructor]
-            public MultipleConstructors(Dependency dependency1)
-            {
-                Dependency1 = dependency1;
-                Dependency2 = "Second Constructor";
-            }
-
-            public Dependency Dependency1 { get; }
-
-            public string Dependency2 { get; }
+            Dependency1 = dependency1;
+            Dependency2 = dependency2;
         }
 
-        public class PrivateConstructor
+        [ServiceConstructor]
+        public MultipleConstructors(Dependency dependency1)
         {
-            [ServiceConstructor]
-            private PrivateConstructor(Dependency dependency)
-            {
-                Dependency = dependency;
-            }
-
-            public Dependency Dependency { get; }
+            Dependency1 = dependency1;
+            Dependency2 = "Second Constructor";
         }
 
-        public class PrivateConstructorWithoutSelector
+        public Dependency Dependency1 { get; }
+
+        public string Dependency2 { get; }
+    }
+
+    public class PrivateConstructor
+    {
+        [ServiceConstructor]
+        private PrivateConstructor(Dependency dependency)
         {
-            private PrivateConstructorWithoutSelector()
-            { }
+            Dependency = dependency;
         }
 
-        public class NoConstructorSelector
-        {
-            public NoConstructorSelector()
-            { }
+        public Dependency Dependency { get; }
+    }
 
-            public NoConstructorSelector(Dependency dependency)
-            { }
+    public class PrivateConstructorWithoutSelector
+    {
+        private PrivateConstructorWithoutSelector()
+        { }
+    }
+
+    public class NoConstructorSelector
+    {
+        public NoConstructorSelector()
+        { }
+
+        public NoConstructorSelector(Dependency dependency)
+        { }
+    }
+
+    public class MoreThanOneConstructorSelector
+    {
+        [ServiceConstructor]
+        public MoreThanOneConstructorSelector()
+        { }
+
+        [ServiceConstructor]
+        public MoreThanOneConstructorSelector(Dependency dependency)
+        { }
+    }
+
+    public class ConstructorCustomInjection
+    {
+        public ConstructorCustomInjection(
+            [TestDependencyResolver(Value = "Custom Dependency")] Dependency dependency)
+        {
+            Dependency = dependency;
         }
 
-        public class MoreThanOneConstructorSelector
-        {
-            [ServiceConstructor]
-            public MoreThanOneConstructorSelector()
-            { }
+        public Dependency Dependency { get; }
+    }
 
-            [ServiceConstructor]
-            public MoreThanOneConstructorSelector(Dependency dependency)
-            { }
+    public class UnresolvableConstructorInjection
+    {
+        public UnresolvableConstructorInjection(StringComparer dependency)
+        { }
+    }
+
+    public class NoSetterInjection
+    {
+        public Dependency DependencyGet { get; }
+
+        public Dependency DependencyGetSet { get; set; }
+
+        public Dependency DependencyGetInit { get; init; }
+    }
+
+    public class SetterCustomInjection
+    {
+        [TestDependencyResolver(Value = "Custom Dependency")]
+        public Dependency DependencyGetSet { get; set; }
+    }
+
+    public class NonPublicSetterCustomInjection
+    {
+        [TestDependencyResolver(Value = "Custom Dependency 1")]
+        private Dependency DependencyGetSet1 { get; set; }
+
+        [TestDependencyResolver(Value = "Custom Dependency 2")]
+        public Dependency DependencyGetSet2 { get; private set; }
+
+        [TestDependencyResolver(Value = "Custom Dependency 3")]
+        public Dependency DependencyGetSet3 { get; protected set; }
+
+        [TestDependencyResolver(Value = "Custom Dependency 4")]
+        public Dependency DependencyGetSet4 { get; internal set; }
+
+        public Dependency GetDependencyGetSet1() => DependencyGetSet1;
+    }
+
+    [InjectAllInitOnlyProperties]
+    public class InitOnlySetterInjection
+    {
+        public Dependency DependencyGet { get; }
+
+        public Dependency DependencyGetSet { get; set; }
+
+        public Dependency DependencyGetInit { get; init; }
+    }
+
+    [InjectAllInitOnlyProperties]
+    public class InitOnlySetterCustomInjection
+    {
+        [TestDependencyResolver(Value = "Custom Dependency")]
+        public Dependency DependencyGetInit { get; init; }
+    }
+
+    [InjectAllInitOnlyProperties]
+    public class UnresolvableInitOnlySetterInjection
+    {
+        public StringComparer DependencyGetInit { get; init; }
+    }
+
+    public static class StaticType
+    {
+        static StaticType() { }
+    }
+
+    public partial class Methods
+    {
+        public static string ParameterInjection(Dependency dependency) => dependency.Value;
+
+        public static string ParameterCustomInjection(
+            [TestDependencyResolver(Value = "Custom Dependency")] Dependency dependency)
+        {
+            return dependency.Value;
         }
 
-        public class ConstructorCustomInjection
-        {
-            public ConstructorCustomInjection(
-                [TestDependencyResolver(Value = "Custom Dependency")] Dependency dependency)
-            {
-                Dependency = dependency;
-            }
+        public string InstanceMethod(Dependency dependency) => dependency.Value;
 
-            public Dependency Dependency { get; }
-        }
+        internal static string InternalMethod(Dependency dependency) => dependency.Value;
 
-        public class UnresolvableConstructorInjection
-        {
-            public UnresolvableConstructorInjection(StringComparer dependency)
-            { }
-        }
+        private static string PrivateMethod(Dependency dependency) => dependency.Value;
 
-        public class NoSetterInjection
-        {
-            public Dependency DependencyGet { get; }
-
-            public Dependency DependencyGetSet { get; set; }
-
-            public Dependency DependencyGetInit { get; init; }
-        }
-
-        public class SetterCustomInjection
-        {
-            [TestDependencyResolver(Value = "Custom Dependency")]
-            public Dependency DependencyGetSet { get; set; }
-        }
-
-        public class NonPublicSetterCustomInjection
-        {
-            [TestDependencyResolver(Value = "Custom Dependency 1")]
-            private Dependency DependencyGetSet1 { get; set; }
-
-            [TestDependencyResolver(Value = "Custom Dependency 2")]
-            public Dependency DependencyGetSet2 { get; private set; }
-
-            [TestDependencyResolver(Value = "Custom Dependency 3")]
-            public Dependency DependencyGetSet3 { get; protected set; }
-
-            [TestDependencyResolver(Value = "Custom Dependency 4")]
-            public Dependency DependencyGetSet4 { get; internal set; }
-
-            public Dependency GetDependencyGetSet1() => DependencyGetSet1;
-        }
-
-        [InjectAllInitOnlyProperties]
-        public class InitOnlySetterInjection
-        {
-            public Dependency DependencyGet { get; }
-
-            public Dependency DependencyGetSet { get; set; }
-
-            public Dependency DependencyGetInit { get; init; }
-        }
-
-        [InjectAllInitOnlyProperties]
-        public class InitOnlySetterCustomInjection
-        {
-            [TestDependencyResolver(Value = "Custom Dependency")]
-            public Dependency DependencyGetInit { get; init; }
-        }
-
-        [InjectAllInitOnlyProperties]
-        public class UnresolvableInitOnlySetterInjection
-        {
-            public StringComparer DependencyGetInit { get; init; }
-        }
-
-        public static class StaticType
-        {
-            static StaticType() { }
-        }
-
-        public partial class Methods
-        {
-            public static string ParameterInjection(Dependency dependency) => dependency.Value;
-
-            public static string ParameterCustomInjection(
-                [TestDependencyResolver(Value = "Custom Dependency")] Dependency dependency)
-            {
-                return dependency.Value;
-            }
-
-            public string InstanceMethod(Dependency dependency) => dependency.Value;
-
-            internal static string InternalMethod(Dependency dependency) => dependency.Value;
-
-            private static string PrivateMethod(Dependency dependency) => dependency.Value;
-
-            public static string UnresolvableParameterInjection(StringComparer dependency) => "";
-        }
+        public static string UnresolvableParameterInjection(StringComparer dependency) => "";
     }
 }

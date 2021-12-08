@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Quickwire
+namespace Quickwire;
+
+public enum ServiceDescriptorMergeStrategy
 {
-    public enum ServiceDescriptorMergeStrategy
-    {
-        Replace,
-        Skip,
-        Throw
-    }
+    Replace,
+    Skip,
+    Throw
 }
