@@ -41,15 +41,18 @@ public class InjectConfigurationAttribute : Attribute, IDependencyResolver
         IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
         string value = configuration[ConfigurationKey];
 
+        if (type == typeof(string))
+            return value;
+
         Type? nullableOf = Nullable.GetUnderlyingType(type);
 
         if (nullableOf != null)
             return value == null ? null : Resolve(serviceProvider, nullableOf);
-        if (type == typeof(TimeSpan))
+        else if (type == typeof(TimeSpan))
             return TimeSpan.Parse(value);
-        if (type == typeof(Guid))
+        else if (type == typeof(Guid))
             return Guid.Parse(value);
-        if (type == typeof(Uri))
+        else if (type == typeof(Uri))
             return new Uri(value);
         else if (type.IsEnum)
             return Enum.Parse(type, value);
@@ -61,27 +64,18 @@ public class InjectConfigurationAttribute : Attribute, IDependencyResolver
             }
             catch (InvalidCastException)
             {
-                object? result = TryParse(type, value);
-                if (result != null)
-                    return result;
+                MethodInfo? parse = type.GetMethod(
+                    "Parse",
+                    BindingFlags.Static | BindingFlags.Public,
+                    null,
+                    new[] { typeof(string) },
+                    new ParameterModifier[0]);
+
+                if (parse != null && !parse.IsGenericMethod)
+                    return parse.Invoke(null, new object[] { value });
                 else
                     throw;
             }
         }
-    }
-
-    private static object? TryParse(Type type, string value)
-    {
-        MethodInfo? parse = type.GetMethod(
-            "Parse",
-            BindingFlags.Static | BindingFlags.Public,
-            null,
-            new[] { typeof(string) },
-            new ParameterModifier[0]);
-
-        if (parse != null && !parse.IsGenericMethod)
-            return parse.Invoke(null, new object[] { value });
-        else
-            return null;
     }
 }

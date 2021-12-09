@@ -16,7 +16,7 @@ Attribute-based dependency injection for .NET.
 1. Install from NuGet:
 
 ```
-nuget install Quickwire
+dotnet add package Quickwire
 ```
 
 2. Activate Quickwire for the current assembly in the `AddServices` method of the `Startup` class:
