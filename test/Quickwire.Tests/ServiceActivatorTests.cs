@@ -140,6 +140,16 @@ public partial class ServiceActivatorTests
     }
 
     [Fact]
+    public void GetFactoryType_InheritedSetterCustomInjection()
+    {
+        object resultObject = _activator.GetFactory(typeof(InheritedSetterCustomInjection))(_serviceProvider);
+        InheritedSetterCustomInjection result = resultObject as InheritedSetterCustomInjection;
+
+        Assert.NotNull(result);
+        Assert.Equal("Custom Dependency", result.DependencyGetSet.Value);
+    }
+
+    [Fact]
     public void GetFactoryType_NonPublicSetterCustomInjection()
     {
         object resultObject = _activator.GetFactory(typeof(NonPublicSetterCustomInjection))(_serviceProvider);

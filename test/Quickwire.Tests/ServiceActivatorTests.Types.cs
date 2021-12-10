@@ -111,6 +111,9 @@ public partial class ServiceActivatorTests
         public Dependency DependencyGetSet { get; set; }
     }
 
+    public class InheritedSetterCustomInjection : SetterCustomInjection
+    { }
+
     public class NonPublicSetterCustomInjection
     {
         [TestDependencyResolver(Value = "Custom Dependency 1")]
