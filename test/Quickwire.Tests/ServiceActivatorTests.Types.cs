@@ -141,6 +141,9 @@ public partial class ServiceActivatorTests
         public Dependency DependencyGetInit { get; init; }
     }
 
+    public class InheritedInitOnlySetterInjection : InitOnlySetterInjection
+    { }
+
     [InjectAllInitOnlyProperties]
     public class InitOnlySetterCustomInjection
     {

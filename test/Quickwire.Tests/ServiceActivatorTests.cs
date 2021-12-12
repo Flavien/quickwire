@@ -175,6 +175,18 @@ public partial class ServiceActivatorTests
     }
 
     [Fact]
+    public void GetFactoryType_InheritedInitOnlySetterInjection()
+    {
+        object resultObject = _activator.GetFactory(typeof(InheritedInitOnlySetterInjection))(_serviceProvider);
+        InheritedInitOnlySetterInjection result = resultObject as InheritedInitOnlySetterInjection;
+
+        Assert.NotNull(result);
+        Assert.Null(result.DependencyGet);
+        Assert.Null(result.DependencyGetSet);
+        Assert.Equal(_dependency, result.DependencyGetInit);
+    }
+
+    [Fact]
     public void GetFactoryType_InitOnlySetterCustomInjection()
     {
         object resultObject = _activator.GetFactory(typeof(InitOnlySetterCustomInjection))(_serviceProvider);

@@ -36,9 +36,9 @@ public partial class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void ScanServiceRegistrations_TypeRegistered()
+    public void ScanTypes_TypeRegistered()
     {
-        _services.ScanType(typeof(TypeRegistered), ServiceDescriptorMergeStrategy.Throw);
+        _services.ScanTypes(new[] { typeof(TypeRegistered) }, ServiceDescriptorMergeStrategy.Throw);
 
         Assert.Equal(4, _services.Count);
         ServiceDescriptor descriptor = _services.Last();
@@ -48,9 +48,9 @@ public partial class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void ScanServiceRegistrations_FactoryRegistered()
+    public void ScanTypes_FactoryRegistered()
     {
-        _services.ScanType(typeof(FactoryRegistered), ServiceDescriptorMergeStrategy.Throw);
+        _services.ScanTypes(new[] { typeof(FactoryRegistered) }, ServiceDescriptorMergeStrategy.Throw);
 
         Assert.Equal(4, _services.Count);
         ServiceDescriptor descriptor = _services.Last();
@@ -60,9 +60,9 @@ public partial class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void ScanServiceRegistrations_MergeReplace()
+    public void ScanTypes_MergeReplace()
     {
-        _services.ScanType(typeof(Merge), ServiceDescriptorMergeStrategy.Replace);
+        _services.ScanTypes(new[] { typeof(Merge) }, ServiceDescriptorMergeStrategy.Replace);
 
         Assert.Equal(3, _services.Count);
         ServiceDescriptor descriptor = _services.Last();
@@ -72,9 +72,9 @@ public partial class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void ScanServiceRegistrations_MergeSkip()
+    public void ScanTypes_MergeSkip()
     {
-        _services.ScanType(typeof(Merge), ServiceDescriptorMergeStrategy.Skip);
+        _services.ScanTypes(new[] { typeof(Merge) }, ServiceDescriptorMergeStrategy.Skip);
 
         Assert.Equal(3, _services.Count);
         ServiceDescriptor descriptor = _services.Last();
@@ -84,10 +84,10 @@ public partial class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void ScanServiceRegistrations_MergeThrow()
+    public void ScanTypes_MergeThrow()
     {
         ArgumentException exception = Assert.Throws<ArgumentException>(() =>
-            _services.ScanType(typeof(Merge), ServiceDescriptorMergeStrategy.Throw));
+            _services.ScanTypes(new[] { typeof(Merge) }, ServiceDescriptorMergeStrategy.Throw));
 
         Assert.Equal($"The service of type System.IComparable has already been added.", exception.Message);
 

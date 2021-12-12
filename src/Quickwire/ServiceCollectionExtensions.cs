@@ -15,6 +15,7 @@
 namespace Quickwire;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,10 +26,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection ScanAssembly(
         this IServiceCollection services,
         Assembly assembly,
+        Func<Type, bool> typeFilter,
         ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
     {
-        foreach (Type type in assembly.GetExportedTypes())
-            services.ScanType(type, mergeStrategy);
+        services.ScanTypes(assembly.GetExportedTypes().Where(typeFilter), mergeStrategy);
 
         return services;
     }
@@ -37,22 +38,25 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
     {
-        return services.ScanAssembly(Assembly.GetCallingAssembly(), mergeStrategy);
+        return services.ScanAssembly(Assembly.GetCallingAssembly(), static _ => true, mergeStrategy);
     }
 
-    public static IServiceCollection ScanType(
+    public static IServiceCollection ScanTypes(
         this IServiceCollection services,
-        Type type, ServiceDescriptorMergeStrategy
-        mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
+        IEnumerable<Type> types,
+        ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
     {
         services.TryAddSingleton<IServiceActivator>(new ServiceActivator());
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanServiceRegistrations(type, serviceProvider))
-            MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
+        foreach (Type type in types)
+        {
+            foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanServiceRegistrations(type, serviceProvider))
+                MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
 
-        foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanFactoryRegistrations(type, serviceProvider))
-            MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
+            foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanFactoryRegistrations(type, serviceProvider))
+                MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
+        }
 
         return services;
     }
