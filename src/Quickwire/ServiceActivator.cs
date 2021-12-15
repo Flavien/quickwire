@@ -33,7 +33,10 @@ public class ServiceActivator : IServiceActivator
     public Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
     {
         if (!methodInfo.IsStatic)
-            throw new InvalidOperationException("Factory methods must be static.");
+            throw new ArgumentException($"The factory method {methodInfo.Name} must be static.");
+
+        if (methodInfo.ContainsGenericParameters)
+            throw new ArgumentException($"The factory method {methodInfo.Name} must not have any generic parameter.");
 
         ParameterInfo[]? parameters = methodInfo.GetParameters();
         IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
@@ -57,6 +60,9 @@ public class ServiceActivator : IServiceActivator
     /// </summary>
     public Func<IServiceProvider, object> GetFactory(Type type)
     {
+        if (type.ContainsGenericParameters)
+            throw new ArgumentException($"The service type {type.FullName} must not be generic.");
+
         ConstructorInfo constructorInfo = GetConstructor(type);
         ParameterInfo[] parameters = constructorInfo.GetParameters();
         IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);

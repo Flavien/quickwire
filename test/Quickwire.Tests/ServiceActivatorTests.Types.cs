@@ -162,7 +162,10 @@ public partial class ServiceActivatorTests
         static StaticType() { }
     }
 
-    public partial class Methods
+    public static class GenericType<T>
+    { }
+
+    public class Methods
     {
         public static string ParameterInjection(Dependency dependency) => dependency.Value;
 
@@ -172,12 +175,19 @@ public partial class ServiceActivatorTests
             return dependency.Value;
         }
 
-        public string InstanceMethod(Dependency dependency) => dependency.Value;
-
         internal static string InternalMethod(Dependency dependency) => dependency.Value;
 
         private static string PrivateMethod(Dependency dependency) => dependency.Value;
 
         public static string UnresolvableParameterInjection(StringComparer dependency) => "";
+
+        public string InstanceMethod(Dependency dependency) => dependency.Value;
+
+        public static string GenericMethod<T>(Dependency dependency) => dependency.Value;
+
+        public class GenericType<T>
+        {
+            public static string Method(Dependency dependency) => dependency.Value;
+        }
     }
 }

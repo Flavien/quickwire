@@ -27,15 +27,15 @@ internal class DelegateCompiler
 
     public delegate object Constructor(object?[] arguments);
 
-    public static Setter CreateSetter(Type type, MethodInfo method)
+    public static Setter CreateSetter(Type type, MethodInfo setter)
     {
         ParameterExpression instanceParameter = Expression.Parameter(typeof(object), "target");
         ParameterExpression valueParameter = Expression.Parameter(typeof(object), "value");
 
         MethodCallExpression call = Expression.Call(
             Expression.Convert(instanceParameter, type),
-            method,
-            Expression.Convert(valueParameter, method.GetParameters()[0].ParameterType));
+            setter,
+            Expression.Convert(valueParameter, setter.GetParameters()[0].ParameterType));
 
         Expression<Setter> lambda = Expression.Lambda<Setter>(
             call,
@@ -81,7 +81,8 @@ internal class DelegateCompiler
         return method.GetParameters()
             .Select((parameter, index) =>
                 Expression.Convert(
-                    Expression.ArrayIndex(argumentsParameter, Expression.Constant(index)), parameter.ParameterType))
+                    Expression.ArrayIndex(argumentsParameter, Expression.Constant(index)),
+                    parameter.ParameterType))
             .ToArray();
     }
 }

@@ -72,8 +72,13 @@ public partial class ServiceActivatorTests
     [Fact]
     public void GetFactoryType_PrivateConstructorWithoutSelector()
     {
-        Assert.Throws<ArgumentException>(() =>
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
             _activator.GetFactory(typeof(PrivateConstructorWithoutSelector)));
+
+        Assert.Equal(
+            "The type Quickwire.Tests.ServiceActivatorTests+PrivateConstructorWithoutSelector must have exactly one " +
+            "public constructor.",
+            exception.Message);
     }
 
     [Fact]
@@ -214,6 +219,17 @@ public partial class ServiceActivatorTests
             exception.Message);
     }
 
+    [Fact]
+    public void GetFactoryType_GenericType()
+    {
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            _activator.GetFactory(typeof(GenericType<>)));
+
+        Assert.Equal(
+            "The service type Quickwire.Tests.ServiceActivatorTests+GenericType`1 must not be generic.",
+            exception.Message);
+    }
+
     #endregion
 
     #region GetFactory(MethodInfo)
@@ -234,13 +250,6 @@ public partial class ServiceActivatorTests
         string result = resultObject as string;
 
         Assert.Equal("Custom Dependency", result);
-    }
-
-    [Fact]
-    public void GetFactoryMethodInfo_InstanceMethod()
-    {
-        Assert.Throws<InvalidOperationException>(() =>
-            _activator.GetFactory(GetMethod(nameof(Methods.InstanceMethod))));
     }
 
     [Fact]
@@ -266,6 +275,39 @@ public partial class ServiceActivatorTests
     {
         Assert.Throws<InvalidOperationException>(() =>
             _activator.GetFactory(GetMethod(nameof(Methods.UnresolvableParameterInjection)))(_serviceProvider));
+    }
+
+    [Fact]
+    public void GetFactoryMethodInfo_InstanceMethod()
+    {
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            _activator.GetFactory(GetMethod(nameof(Methods.InstanceMethod))));
+
+        Assert.Equal(
+            "The factory method InstanceMethod must be static.",
+            exception.Message);
+    }
+
+    [Fact]
+    public void GetFactoryMethodInfo_GenericMethod()
+    {
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            _activator.GetFactory(GetMethod(nameof(Methods.GenericMethod))));
+
+        Assert.Equal(
+            "The factory method GenericMethod must not have any generic parameter.",
+            exception.Message);
+    }
+
+    [Fact]
+    public void GetFactoryMethodInfo_GenericType()
+    {
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            _activator.GetFactory(typeof(Methods.GenericType<>).GetMethod("Method")));
+
+        Assert.Equal(
+            "The factory method Method must not have any generic parameter.",
+            exception.Message);
     }
 
     private MethodInfo GetMethod(string name) =>
