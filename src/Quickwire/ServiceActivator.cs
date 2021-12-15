@@ -37,6 +37,7 @@ public class ServiceActivator : IServiceActivator
 
         ParameterInfo[]? parameters = methodInfo.GetParameters();
         IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
+        DelegateCompiler.Factory factory = DelegateCompiler.CreateFactory(methodInfo);
 
         return delegate (IServiceProvider serviceProvider)
         {
@@ -45,7 +46,7 @@ public class ServiceActivator : IServiceActivator
             for (int i = 0; i < parameters.Length; i++)
                 arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
 
-            object? result = methodInfo.Invoke(null, arguments);
+            object? result = factory(arguments);
 
             return result;
         };
@@ -56,9 +57,10 @@ public class ServiceActivator : IServiceActivator
     /// </summary>
     public Func<IServiceProvider, object> GetFactory(Type type)
     {
-        ConstructorInfo constructor = GetConstructor(type);
-        ParameterInfo[] parameters = constructor.GetParameters();
+        ConstructorInfo constructorInfo = GetConstructor(type);
+        ParameterInfo[] parameters = constructorInfo.GetParameters();
         IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
+        DelegateCompiler.Constructor constructor = DelegateCompiler.CreateConstructor(constructorInfo);
         List<SetterInfo> setters = GetSetters(type);
 
         return delegate (IServiceProvider serviceProvider)
@@ -68,13 +70,12 @@ public class ServiceActivator : IServiceActivator
             for (int i = 0; i < parameters.Length; i++)
                 arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
 
-            object result = constructor.Invoke(arguments);
+            object result = constructor(arguments);
 
             foreach (SetterInfo setter in setters)
             {
                 object? resolvedDependency = Resolve(serviceProvider, setter.ServiceType, setter.DependencyResolver);
-
-                setter.Setter.Invoke(result, new[] { resolvedDependency });
+                setter.Setter(result, resolvedDependency);
             }
 
             return result;
@@ -143,7 +144,10 @@ public class ServiceActivator : IServiceActivator
                     .Contains(typeof(IsExternalInit));
 
                 if (dependencyResolver != null || (injectAllInitOnlyProperties && isInitOnly))
-                    setters.Add(new SetterInfo(property.PropertyType, setter, dependencyResolver));
+                {
+                    DelegateCompiler.Setter compiledSetter = DelegateCompiler.CreateSetter(type, setter);
+                    setters.Add(new SetterInfo(property.PropertyType, compiledSetter, dependencyResolver));
+                }
             }
         }
 
@@ -166,5 +170,5 @@ public class ServiceActivator : IServiceActivator
             return dependencyResolver.Resolve(serviceProvider, serviceType);
     }
 
-    private record SetterInfo(Type ServiceType, MethodInfo Setter, IDependencyResolver? DependencyResolver);
+    private record SetterInfo(Type ServiceType, DelegateCompiler.Setter Setter, IDependencyResolver? DependencyResolver);
 }
