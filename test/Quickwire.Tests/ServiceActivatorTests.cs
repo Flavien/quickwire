@@ -168,6 +168,16 @@ public partial class ServiceActivatorTests
     }
 
     [Fact]
+    public void GetFactoryType_NoSetterCustomInjection()
+    {
+        object resultObject = _activator.GetFactory(typeof(NoSetterCustomInjection))(_serviceProvider);
+        NoSetterCustomInjection result = resultObject as NoSetterCustomInjection;
+
+        Assert.NotNull(result);
+        Assert.Null(result.DependencyGet);
+    }
+
+    [Fact]
     public void GetFactoryType_InitOnlySetterInjection()
     {
         object resultObject = _activator.GetFactory(typeof(InitOnlySetterInjection))(_serviceProvider);

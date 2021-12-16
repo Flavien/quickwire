@@ -131,6 +131,12 @@ public partial class ServiceActivatorTests
         public Dependency GetDependencyGetSet1() => DependencyGetSet1;
     }
 
+    public class NoSetterCustomInjection
+    {
+        [TestDependencyResolver(Value = "Custom Dependency")]
+        public Dependency DependencyGet { get; }
+    }
+
     [InjectAllInitOnlyProperties]
     public class InitOnlySetterInjection
     {
