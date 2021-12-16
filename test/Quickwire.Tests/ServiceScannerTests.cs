@@ -80,7 +80,8 @@ public partial class ServiceScannerTests
             ServiceScanner.ScanServiceRegistrations(typeof(InvalidServiceType), _serviceProvider).ToList());
 
         Assert.Equal(
-            "The concrete type Quickwire.Tests.ServiceScannerTests+InvalidServiceType cannot be used to register service type System.IComparable.",
+            "The concrete type 'Quickwire.Tests.ServiceScannerTests+InvalidServiceType' cannot be used to register " +
+            "service type 'System.IComparable'.",
             exception.Message);
     }
 
@@ -177,7 +178,8 @@ public partial class ServiceScannerTests
             ServiceScanner.ScanFactoryRegistrations(typeof(InvalidFactoryType), _serviceProvider).ToList());
 
         Assert.Equal(
-            "The method Factory1 with return type System.String cannot be used to register service type System.IDisposable.",
+            "The method 'Factory1' with return type 'System.String' cannot be used to register service type " +
+            "'System.IDisposable'.",
             exception.Message);
     }
 

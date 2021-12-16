@@ -18,12 +18,43 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
 public static class ServiceScanner
 {
-    public static IEnumerable<ServiceDescriptor> ScanServiceRegistrations(Type type, IServiceProvider serviceProvider)
+    public static IList<ServiceDescriptor> ScanServiceRegistrations(Type type, IServiceProvider serviceProvider) =>
+        BuildServiceDescriptorList(EnumerateServiceRegistrations(type, serviceProvider));
+
+    public static IList<ServiceDescriptor> ScanFactoryRegistrations(Type type, IServiceProvider serviceProvider) =>
+        BuildServiceDescriptorList(EnumerateFactoryRegistrations(type, serviceProvider));
+
+    private static IList<ServiceDescriptor> BuildServiceDescriptorList(IEnumerable<Func<ServiceDescriptor>> serviceDescriptors)
+    {
+        List<ServiceDescriptor> result = new List<ServiceDescriptor>();
+        object gate = new object();
+
+        try
+        {
+            Parallel.ForEach(
+                serviceDescriptors,
+                getDescriptor =>
+                {
+                    ServiceDescriptor descriptor = getDescriptor();
+                    lock (gate)
+                        result.Add(descriptor);
+                });
+        }
+        catch (AggregateException aggregateException)
+        {
+            throw aggregateException.GetBaseException();
+        }
+
+        return result;
+    }
+
+    private static IEnumerable<Func<ServiceDescriptor>> EnumerateServiceRegistrations(Type type, IServiceProvider serviceProvider)
     {
         IServiceActivator serviceActivator = serviceProvider.GetService<IServiceActivator>();
 
@@ -36,10 +67,10 @@ public static class ServiceScanner
                 if (!serviceType.IsAssignableFrom(type))
                 {
                     throw new ArgumentException(
-                        $"The concrete type {type.FullName} cannot be used to register service type {serviceType.FullName}.");
+                        $"The concrete type '{type.FullName}' cannot be used to register service type '{serviceType.FullName}'.");
                 }
 
-                yield return new ServiceDescriptor(
+                yield return () => new ServiceDescriptor(
                     serviceType,
                     serviceActivator.GetFactory(type),
                     registerAttribute.Scope);
@@ -47,7 +78,7 @@ public static class ServiceScanner
         }
     }
 
-    public static IEnumerable<ServiceDescriptor> ScanFactoryRegistrations(Type type, IServiceProvider serviceProvider)
+    public static IEnumerable<Func<ServiceDescriptor>> EnumerateFactoryRegistrations(Type type, IServiceProvider serviceProvider)
     {
         if (CanScan(type, serviceProvider))
         {
@@ -64,11 +95,11 @@ public static class ServiceScanner
                         if (!serviceType.IsAssignableFrom(method.ReturnType))
                         {
                             throw new ArgumentException(
-                                $"The method {method.Name} with return type {method.ReturnType} cannot be used " +
-                                $"to register service type {serviceType.FullName}.");
+                                $"The method '{method.Name}' with return type '{method.ReturnType}' cannot be used " +
+                                $"to register service type '{serviceType.FullName}'.");
                         }
 
-                        yield return new ServiceDescriptor(
+                        yield return () => new ServiceDescriptor(
                             serviceType,
                             serviceActivator.GetFactory(method),
                             registerAttribute.Scope);
