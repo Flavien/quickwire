@@ -237,8 +237,7 @@ public partial class ServiceActivatorTests
     [Fact]
     public void GetFactoryMethodInfo_ParameterInjection()
     {
-        object resultObject = _activator.GetFactory(GetMethod(nameof(Methods.ParameterInjection)))(_serviceProvider);
-        string result = resultObject as string;
+        object result = _activator.GetFactory(GetMethod(nameof(Methods.ParameterInjection)))(_serviceProvider);
 
         Assert.Equal("Default", result);
     }
@@ -246,8 +245,7 @@ public partial class ServiceActivatorTests
     [Fact]
     public void GetFactoryMethodInfo_ParameterCustomInjection()
     {
-        object resultObject = _activator.GetFactory(GetMethod(nameof(Methods.ParameterCustomInjection)))(_serviceProvider);
-        string result = resultObject as string;
+        object result = _activator.GetFactory(GetMethod(nameof(Methods.ParameterCustomInjection)))(_serviceProvider);
 
         Assert.Equal("Custom Dependency", result);
     }
@@ -255,8 +253,7 @@ public partial class ServiceActivatorTests
     [Fact]
     public void GetFactoryMethodInfo_InternalMethod()
     {
-        object resultObject = _activator.GetFactory(GetMethod(nameof(Methods.InternalMethod)))(_serviceProvider);
-        string result = resultObject as string;
+        object result = _activator.GetFactory(GetMethod(nameof(Methods.InternalMethod)))(_serviceProvider);
 
         Assert.Equal("Default", result);
     }
@@ -264,10 +261,17 @@ public partial class ServiceActivatorTests
     [Fact]
     public void GetFactoryMethodInfo_PrivateMethod()
     {
-        object resultObject = _activator.GetFactory(GetMethod("PrivateMethod"))(_serviceProvider);
-        string result = resultObject as string;
+        object result = _activator.GetFactory(GetMethod("PrivateMethod"))(_serviceProvider);
 
         Assert.Equal("Default", result);
+    }
+
+    [Fact]
+    public void GetFactoryMethodInfo_ValueType()
+    {
+        object result = _activator.GetFactory(GetMethod(nameof(Methods.ValueType)))(_serviceProvider);
+
+        Assert.Equal(1, result);
     }
 
     [Fact]

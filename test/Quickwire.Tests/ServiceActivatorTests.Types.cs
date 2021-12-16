@@ -179,6 +179,8 @@ public partial class ServiceActivatorTests
 
         private static string PrivateMethod(Dependency dependency) => dependency.Value;
 
+        public static int ValueType(Dependency dependency) => 1;
+
         public static string UnresolvableParameterInjection(StringComparer dependency) => "";
 
         public string InstanceMethod(Dependency dependency) => dependency.Value;
