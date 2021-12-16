@@ -76,8 +76,8 @@ public partial class ServiceActivatorTests
             _activator.GetFactory(typeof(PrivateConstructorWithoutSelector)));
 
         Assert.Equal(
-            "The type Quickwire.Tests.ServiceActivatorTests+PrivateConstructorWithoutSelector must have exactly one " +
-            "public constructor.",
+            "The type 'Quickwire.Tests.ServiceActivatorTests+PrivateConstructorWithoutSelector' must have exactly " +
+            "one public constructor.",
             exception.Message);
     }
 
@@ -88,7 +88,7 @@ public partial class ServiceActivatorTests
             _activator.GetFactory(typeof(NoConstructorSelector)));
 
         Assert.Equal(
-            "The type Quickwire.Tests.ServiceActivatorTests+NoConstructorSelector must have exactly one public " +
+            "The type 'Quickwire.Tests.ServiceActivatorTests+NoConstructorSelector' must have exactly one public " +
             "constructor.",
             exception.Message);
     }
@@ -100,7 +100,7 @@ public partial class ServiceActivatorTests
             _activator.GetFactory(typeof(MoreThanOneConstructorSelector)));
 
         Assert.Equal(
-            "The type Quickwire.Tests.ServiceActivatorTests+MoreThanOneConstructorSelector has more than one " +
+            "The type 'Quickwire.Tests.ServiceActivatorTests+MoreThanOneConstructorSelector' has more than one " +
             "constructor decorated with the [ServiceConstructor] attribute.",
             exception.Message);
     }
@@ -215,7 +215,7 @@ public partial class ServiceActivatorTests
             _activator.GetFactory(typeof(StaticType)));
 
         Assert.Equal(
-            "The type Quickwire.Tests.ServiceActivatorTests+StaticType must have exactly one public constructor.",
+            "The type 'Quickwire.Tests.ServiceActivatorTests+StaticType' must have exactly one public constructor.",
             exception.Message);
     }
 
@@ -226,7 +226,7 @@ public partial class ServiceActivatorTests
             _activator.GetFactory(typeof(GenericType<>)));
 
         Assert.Equal(
-            "The service type Quickwire.Tests.ServiceActivatorTests+GenericType`1 must not be generic.",
+            "The service type 'Quickwire.Tests.ServiceActivatorTests+GenericType`1' must not be generic.",
             exception.Message);
     }
 
@@ -288,7 +288,7 @@ public partial class ServiceActivatorTests
             _activator.GetFactory(GetMethod(nameof(Methods.InstanceMethod))));
 
         Assert.Equal(
-            "The factory method InstanceMethod must be static.",
+            "The factory method 'InstanceMethod' must be static.",
             exception.Message);
     }
 
@@ -299,7 +299,7 @@ public partial class ServiceActivatorTests
             _activator.GetFactory(GetMethod(nameof(Methods.GenericMethod))));
 
         Assert.Equal(
-            "The factory method GenericMethod must not have any generic parameter.",
+            "The factory method 'GenericMethod' must not have any generic parameter.",
             exception.Message);
     }
 
@@ -310,7 +310,7 @@ public partial class ServiceActivatorTests
             _activator.GetFactory(typeof(Methods.GenericType<>).GetMethod("Method")));
 
         Assert.Equal(
-            "The factory method Method must not have any generic parameter.",
+            "The factory method 'Method' must not have any generic parameter.",
             exception.Message);
     }
 

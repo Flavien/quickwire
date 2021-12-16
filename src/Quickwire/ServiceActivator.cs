@@ -33,10 +33,10 @@ public class ServiceActivator : IServiceActivator
     public Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
     {
         if (!methodInfo.IsStatic)
-            throw new ArgumentException($"The factory method {methodInfo.Name} must be static.");
+            throw new ArgumentException($"The factory method '{methodInfo.Name}' must be static.");
 
         if (methodInfo.ContainsGenericParameters)
-            throw new ArgumentException($"The factory method {methodInfo.Name} must not have any generic parameter.");
+            throw new ArgumentException($"The factory method '{methodInfo.Name}' must not have any generic parameter.");
 
         ParameterInfo[]? parameters = methodInfo.GetParameters();
         IDependencyResolver?[] dependencyResolvers = GetParametersDependencyResolvers(parameters);
@@ -61,7 +61,7 @@ public class ServiceActivator : IServiceActivator
     public Func<IServiceProvider, object> GetFactory(Type type)
     {
         if (type.ContainsGenericParameters)
-            throw new ArgumentException($"The service type {type.FullName} must not be generic.");
+            throw new ArgumentException($"The service type '{type.FullName}' must not be generic.");
 
         ConstructorInfo constructorInfo = GetConstructor(type);
         ParameterInfo[] parameters = constructorInfo.GetParameters();
@@ -104,7 +104,7 @@ public class ServiceActivator : IServiceActivator
         else if (primaryConstructor.Count > 1)
         {
             throw new ArgumentException(
-                $"The type {type.FullName} has more than one constructor decorated with the " +
+                $"The type '{type.FullName}' has more than one constructor decorated with the " +
                 $"[ServiceConstructor] attribute.");
         }
         else
@@ -116,7 +116,7 @@ public class ServiceActivator : IServiceActivator
             if (publicConstructors.Count == 1)
                 return publicConstructors[0];
             else
-                throw new ArgumentException($"The type {type.FullName} must have exactly one public constructor.");
+                throw new ArgumentException($"The type '{type.FullName}' must have exactly one public constructor.");
         }
     }
 
