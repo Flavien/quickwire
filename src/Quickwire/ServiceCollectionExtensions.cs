@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -49,14 +50,25 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<IServiceActivator>(new ServiceActivator());
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        foreach (Type type in types)
-        {
-            foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanServiceRegistrations(type, serviceProvider))
-                MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
+        IEnumerable<Func<ServiceDescriptor>> serviceDescriptorFactoryList =
+            types.SelectMany(type =>
+                ServiceScanner.ScanServiceRegistrations(type, serviceProvider).Concat(
+                ServiceScanner.ScanFactoryRegistrations(type, serviceProvider)));
 
-            foreach (ServiceDescriptor serviceDescriptor in ServiceScanner.ScanFactoryRegistrations(type, serviceProvider))
-                MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
-        }
+        List<ServiceDescriptor> serviceDescriptors = new List<ServiceDescriptor>();
+        object gate = new object();
+
+        Parallel.ForEach(
+            serviceDescriptorFactoryList,
+            getDescriptor =>
+            {
+                ServiceDescriptor descriptor = getDescriptor();
+                lock (gate)
+                    serviceDescriptors.Add(descriptor);
+            });
+
+        foreach (ServiceDescriptor serviceDescriptor in serviceDescriptors)
+            MergeServiceDescriptor(services, serviceDescriptor, mergeStrategy);
 
         return services;
     }

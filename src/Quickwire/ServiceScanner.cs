@@ -18,43 +18,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
 public static class ServiceScanner
 {
-    public static IList<ServiceDescriptor> ScanServiceRegistrations(Type type, IServiceProvider serviceProvider) =>
-        BuildServiceDescriptorList(EnumerateServiceRegistrations(type, serviceProvider));
-
-    public static IList<ServiceDescriptor> ScanFactoryRegistrations(Type type, IServiceProvider serviceProvider) =>
-        BuildServiceDescriptorList(EnumerateFactoryRegistrations(type, serviceProvider));
-
-    private static IList<ServiceDescriptor> BuildServiceDescriptorList(IEnumerable<Func<ServiceDescriptor>> serviceDescriptors)
-    {
-        List<ServiceDescriptor> result = new List<ServiceDescriptor>();
-        object gate = new object();
-
-        try
-        {
-            Parallel.ForEach(
-                serviceDescriptors,
-                getDescriptor =>
-                {
-                    ServiceDescriptor descriptor = getDescriptor();
-                    lock (gate)
-                        result.Add(descriptor);
-                });
-        }
-        catch (AggregateException aggregateException)
-        {
-            throw aggregateException.GetBaseException();
-        }
-
-        return result;
-    }
-
-    private static IEnumerable<Func<ServiceDescriptor>> EnumerateServiceRegistrations(Type type, IServiceProvider serviceProvider)
+    public static IEnumerable<Func<ServiceDescriptor>> ScanServiceRegistrations(Type type, IServiceProvider serviceProvider)
     {
         IServiceActivator serviceActivator = serviceProvider.GetService<IServiceActivator>();
 
@@ -78,7 +47,7 @@ public static class ServiceScanner
         }
     }
 
-    public static IEnumerable<Func<ServiceDescriptor>> EnumerateFactoryRegistrations(Type type, IServiceProvider serviceProvider)
+    public static IEnumerable<Func<ServiceDescriptor>> ScanFactoryRegistrations(Type type, IServiceProvider serviceProvider)
     {
         if (CanScan(type, serviceProvider))
         {

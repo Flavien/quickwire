@@ -42,6 +42,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanServiceRegistrations(typeof(TypeRegistered), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Single(result);
@@ -55,6 +56,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanServiceRegistrations(typeof(TypeNotRegistered), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Empty(result);
@@ -65,6 +67,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanServiceRegistrations(typeof(SpecifyServiceType), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Single(result);
@@ -90,6 +93,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanServiceRegistrations(typeof(CanScan), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Single(result);
@@ -100,6 +104,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanServiceRegistrations(typeof(CannotScan), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Empty(result);
@@ -110,6 +115,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanServiceRegistrations(typeof(StaticType), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Empty(result);
@@ -124,6 +130,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanFactoryRegistrations(typeof(FactoryRegistered), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Single(result);
@@ -137,6 +144,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanFactoryRegistrations(typeof(FactoryNotRegistered), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Empty(result);
@@ -147,6 +155,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanFactoryRegistrations(typeof(MultipleFactoriesRegistered), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Equal(2, result.Count);
@@ -163,6 +172,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanFactoryRegistrations(typeof(SpecifyFactoryType), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Single(result);
@@ -188,6 +198,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanFactoryRegistrations(typeof(CannotScanFactory), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Equal(2, result.Count);
@@ -204,6 +215,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanFactoryRegistrations(typeof(CanScanClass), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Single(result);
@@ -217,6 +229,7 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanFactoryRegistrations(typeof(CannotScanClass), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
             .ToList();
 
         Assert.Empty(result);
