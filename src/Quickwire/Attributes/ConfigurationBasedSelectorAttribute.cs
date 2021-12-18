@@ -19,7 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// Indicates that a type or method should be excluded or included from dependency injection registration based
+/// Specifies that a type or method should be excluded or included from dependency injection registration based
 /// on a configuration setting coming from the <see cref="IConfiguration"/> service.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]

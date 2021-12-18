@@ -17,7 +17,7 @@ namespace Quickwire.Attributes;
 using System;
 
 /// <summary>
-/// Indicates which constructor should be used for instantiation when the type is activated for
+/// Specifies which constructor should be used for instantiation when the type is activated for
 /// dependency injection.
 /// </summary>
 [AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]

@@ -20,7 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 /// <summary>
-/// Indicates that a type or method should be excluded or included from dependency injection registration based on
+/// Specifies that a type or method should be excluded or included from dependency injection registration based on
 /// the current environment specified throught the <see cref="IHostEnvironment"/> service.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]

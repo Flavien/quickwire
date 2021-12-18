@@ -18,7 +18,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// Indicates that a parameter or property should be bound using dependency injection resolution.
+/// Specifies that a parameter or property should be bound using dependency injection resolution.
 /// </summary>
 [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public class InjectServiceAttribute : Attribute, IDependencyResolver

@@ -18,7 +18,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// Indicates that a class is a service that can be used for dependency injection.
+/// Specifies that a class is a service that can be used for dependency injection.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
 public class RegisterServiceAttribute : Attribute

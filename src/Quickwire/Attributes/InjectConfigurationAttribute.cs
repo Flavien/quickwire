@@ -20,7 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// Indicates that a parameter or property should be bound using a configuration setting coming from the
+/// Specifies that a parameter or property should be bound using a configuration setting coming from the
 /// <see cref="IConfiguration"/> service.
 /// </summary>
 [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]

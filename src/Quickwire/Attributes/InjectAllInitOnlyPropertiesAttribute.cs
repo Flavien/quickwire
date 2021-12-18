@@ -17,7 +17,7 @@ namespace Quickwire.Attributes;
 using System;
 
 /// <summary>
-/// Indicates that all the init-only properties in a class should automatically be bound using dependency
+/// Specifies that all the init-only properties in a class should automatically be bound using dependency
 /// injection.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]

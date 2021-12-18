@@ -22,14 +22,10 @@ using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 using Quickwire.Attributes;
 
-/// <summary>
-/// Represents a class that can construct factory methods based either on type constructors or static methods.
-/// </summary>
+/// <inheritdoc />
 public class ServiceActivator : IServiceActivator
 {
-    /// <summary>
-    /// Returns a factory method based on a static method.
-    /// </summary>
+    /// <inheritdoc />
     public Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
     {
         if (!methodInfo.IsStatic)
@@ -55,9 +51,7 @@ public class ServiceActivator : IServiceActivator
         };
     }
 
-    /// <summary>
-    /// Returns a factory method based on a type constructor.
-    /// </summary>
+    /// <inheritdoc />
     public Func<IServiceProvider, object> GetFactory(Type type)
     {
         if (type.ContainsGenericParameters)
