@@ -137,6 +137,18 @@ public partial class ServiceActivatorTests
         public Dependency DependencyGet { get; }
     }
 
+    public class IndexerCustomInjection
+    {
+        private Dependency _value;
+
+        [TestDependencyResolver(Value = "Custom Dependency")]
+        public Dependency this[int i]
+        {
+            get { return _value; }
+            set { _value = value; }
+        }
+    }
+
     [InjectAllInitOnlyProperties]
     public class InitOnlySetterInjection
     {

@@ -137,7 +137,7 @@ public class ServiceActivator : IServiceActivator
             IDependencyResolver? dependencyResolver = GetDependencyResolver(property);
             MethodInfo? setter = property.SetMethod;
 
-            if (setter != null)
+            if (setter != null && setter.GetParameters().Length == 1)
             {
                 bool isInitOnly = setter.ReturnParameter
                     .GetRequiredCustomModifiers()

@@ -178,6 +178,16 @@ public partial class ServiceActivatorTests
     }
 
     [Fact]
+    public void GetFactoryType_IndexerCustomInjection()
+    {
+        object resultObject = _activator.GetFactory(typeof(IndexerCustomInjection))(_serviceProvider);
+        IndexerCustomInjection result = resultObject as IndexerCustomInjection;
+
+        Assert.NotNull(result);
+        Assert.Null(result[0]);
+    }
+
+    [Fact]
     public void GetFactoryType_InitOnlySetterInjection()
     {
         object resultObject = _activator.GetFactory(typeof(InitOnlySetterInjection))(_serviceProvider);
