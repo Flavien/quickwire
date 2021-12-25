@@ -38,8 +38,8 @@ public class InjectConfigurationAttributeTests
     }
 
     [Theory]
-    [MemberData(nameof(ResolveData))]
-    public void Resolve_Success(string configurationValue, Type type, object expected)
+    [MemberData(nameof(ResolveSingleValueData))]
+    public void Resolve_SingleValue(string configurationValue, Type type, object expected)
     {
         _configuration["key"] = configurationValue;
 
@@ -51,7 +51,7 @@ public class InjectConfigurationAttributeTests
         Assert.Equal(expected, result);
     }
 
-    public static IEnumerable<object[]> ResolveData =>
+    public static IEnumerable<object[]> ResolveSingleValueData =>
         new List<object[]>
         {
             new object[] { "value", typeof(string), "value" },
@@ -72,6 +72,61 @@ public class InjectConfigurationAttributeTests
             new object[] { "23688849-6394-4492-86ee-3cc2ef5a992f", typeof(Guid), Guid.Parse("23688849-6394-4492-86ee-3cc2ef5a992f") },
             new object[] { "Local", typeof(DateTimeKind), DateTimeKind.Local }
         };
+
+    [Theory]
+    [InlineData(typeof(IList<string>))]
+    [InlineData(typeof(ICollection<string>))]
+    [InlineData(typeof(IEnumerable<string>))]
+    [InlineData(typeof(IReadOnlyList<string>))]
+    [InlineData(typeof(IReadOnlyCollection<string>))]
+    public void Resolve_StringList(Type type)
+    {
+        _configuration["key:0"] = "item1";
+        _configuration["key:1"] = "item2";
+
+        object result = _injectConfiguration.Resolve(_serviceProvider, type);
+
+        Assert.IsAssignableFrom(type, result);
+        Assert.Equal(new[] { "item1", "item2" }, (IEnumerable<string>)result);
+    }
+
+    [Theory]
+    [InlineData(typeof(IList<DateTime>))]
+    [InlineData(typeof(IReadOnlyList<DateTime>))]
+    public void Resolve_DateTimeList(Type type)
+    {
+        _configuration["key:0"] = "2020-12-25T16:08:30";
+        _configuration["key:1"] = "2021-04-15T14:00:00";
+
+        object result = _injectConfiguration.Resolve(_serviceProvider, typeof(IList<DateTime>));
+
+        Assert.IsAssignableFrom(type, result);
+        Assert.Equal(
+            new[]
+            {
+                new DateTime(2020, 12, 25, 16, 8, 30),
+                new DateTime(2021, 4, 15, 14, 0, 0),
+            },
+            (IEnumerable<DateTime>)result);
+    }
+
+    [Fact]
+    public void Resolve_NullableList()
+    {
+        _configuration["key:0"] = "10";
+        _configuration["key:1"] = "20";
+
+        object result = _injectConfiguration.Resolve(_serviceProvider, typeof(IList<int?>));
+
+        Assert.IsAssignableFrom<IList<int?>>(result);
+        Assert.Equal(
+            new[]
+            {
+                new int?(10),
+                new int?(20),
+            },
+            (IEnumerable<int?>)result);
+    }
 
     [Fact]
     public void Resolve_CannotConvert()

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>1.2.1</VersionPrefix>
+    <VersionPrefix>1.2.2</VersionPrefix>
     <Title>Quickwire</Title>
     <Description>Attribute-based dependency injection for .NET.</Description>
     <Authors>Flavien Charlon</Authors>
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <PropertyGroup>
