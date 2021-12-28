@@ -28,6 +28,8 @@ using Microsoft.Extensions.DependencyInjection;
 [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public class InjectConfigurationAttribute : Attribute, IDependencyResolver
 {
+    private static readonly MethodInfo _asReadOnlyMethodInfo = typeof(Array).GetMethod(nameof(Array.AsReadOnly))!;
+
     public InjectConfigurationAttribute(string configurationKey)
     {
         ConfigurationKey = configurationKey;
@@ -84,7 +86,7 @@ public class InjectConfigurationAttribute : Attribute, IDependencyResolver
                     BindingFlags.Static | BindingFlags.Public,
                     null,
                     new[] { typeof(string) },
-                    new ParameterModifier[0]);
+                    Array.Empty<ParameterModifier>());
 
                 if (parse != null && !parse.IsGenericMethod)
                     return parse.Invoke(null, new object[] { value });
@@ -126,12 +128,10 @@ public class InjectConfigurationAttribute : Attribute, IDependencyResolver
         return result;
     }
 
-    private object CreateTypedReadOnlyList(IServiceProvider serviceProvider, Type type, IConfiguration configuration)
+    private object? CreateTypedReadOnlyList(IServiceProvider serviceProvider, Type type, IConfiguration configuration)
     {
         object array = CreateTypedArray(serviceProvider, type, configuration);
 
-        MethodInfo asReadOnly = typeof(Array).GetMethod(nameof(Array.AsReadOnly)).MakeGenericMethod(type);
-
-        return asReadOnly.Invoke(null, new[] { array });
+        return _asReadOnlyMethodInfo.MakeGenericMethod(type).Invoke(null, new[] { array });
     }
 }

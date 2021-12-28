@@ -22,10 +22,10 @@ using Xunit;
 
 public partial class ServiceActivatorTests
 {
-    private readonly ServiceActivator _activator = new ServiceActivator();
+    private readonly ServiceActivator _activator = new();
     private readonly ServiceCollection _services;
     private readonly IServiceProvider _serviceProvider;
-    private readonly Dependency _dependency = new Dependency("Default");
+    private readonly Dependency _dependency = new("Default");
 
     public ServiceActivatorTests()
     {
@@ -334,7 +334,7 @@ public partial class ServiceActivatorTests
             exception.Message);
     }
 
-    private MethodInfo GetMethod(string name) =>
+    private static MethodInfo GetMethod(string name) =>
         typeof(Methods).GetMethod(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
     #endregion

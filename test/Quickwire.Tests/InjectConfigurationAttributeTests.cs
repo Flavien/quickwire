@@ -30,7 +30,7 @@ public class InjectConfigurationAttributeTests
 
     public InjectConfigurationAttributeTests()
     {
-        ServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         _configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
         services.AddSingleton<IConfiguration>(_configuration);
         _serviceProvider = services.BuildServiceProvider();

@@ -27,7 +27,7 @@ public class EnvironmentSelectorAttributeTests
 
     public EnvironmentSelectorAttributeTests()
     {
-        ServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton<IHostEnvironment>(new MockHostEnvironment() { EnvironmentName = "B" });
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -39,7 +39,7 @@ public class EnvironmentSelectorAttributeTests
     [InlineData("A,B,C", "D,E,F")]
     public void CanScan_Enabled(string enabled, string disabled)
     {
-        EnvironmentSelectorAttribute environmentSelector = new EnvironmentSelectorAttribute();
+        EnvironmentSelectorAttribute environmentSelector = new();
         environmentSelector.Enabled = enabled == null ? null : enabled.Split(',');
         environmentSelector.Disabled = disabled == null ? null : disabled.Split(',');
 
@@ -54,7 +54,7 @@ public class EnvironmentSelectorAttributeTests
     [InlineData("A,B,C", "A,B,C")]
     public void CanScan_Disabled(string enabled, string disabled)
     {
-        EnvironmentSelectorAttribute environmentSelector = new EnvironmentSelectorAttribute();
+        EnvironmentSelectorAttribute environmentSelector = new();
         environmentSelector.Enabled = enabled == null ? null : enabled.Split(',');
         environmentSelector.Disabled = disabled == null ? null : disabled.Split(',');
 

@@ -55,8 +55,8 @@ public static class ServiceCollectionExtensions
                 ServiceScanner.ScanServiceRegistrations(type, serviceProvider).Concat(
                 ServiceScanner.ScanFactoryRegistrations(type, serviceProvider)));
 
-        List<ServiceDescriptor> serviceDescriptors = new List<ServiceDescriptor>();
-        object gate = new object();
+        List<ServiceDescriptor> serviceDescriptors = new();
+        object gate = new();
 
         Parallel.ForEach(
             serviceDescriptorFactoryList,

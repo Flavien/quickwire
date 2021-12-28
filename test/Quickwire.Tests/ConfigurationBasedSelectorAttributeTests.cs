@@ -26,7 +26,7 @@ public class ConfigurationBasedSelectorAttributeTests
 
     public ConfigurationBasedSelectorAttributeTests()
     {
-        ServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         IConfiguration configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
         configuration["key"] = "value";
         services.AddSingleton<IConfiguration>(configuration);
@@ -36,7 +36,7 @@ public class ConfigurationBasedSelectorAttributeTests
     [Fact]
     public void CanScan_Enabled()
     {
-        ConfigurationBasedSelectorAttribute selector = new ConfigurationBasedSelectorAttribute("key", "value");
+        ConfigurationBasedSelectorAttribute selector = new("key", "value");
 
         bool canScan = selector.CanScan(_serviceProvider);
 
@@ -46,7 +46,7 @@ public class ConfigurationBasedSelectorAttributeTests
     [Fact]
     public void CanScan_Disabled()
     {
-        ConfigurationBasedSelectorAttribute selector = new ConfigurationBasedSelectorAttribute("key", "no");
+        ConfigurationBasedSelectorAttribute selector = new("key", "no");
 
         bool canScan = selector.CanScan(_serviceProvider);
 

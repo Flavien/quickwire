@@ -128,7 +128,7 @@ public class ServiceActivator : IServiceActivator
     {
         bool injectAllInitOnlyProperties = type.IsDefined(typeof(InjectAllInitOnlyPropertiesAttribute), true);
 
-        List<SetterInfo> setters = new List<SetterInfo>();
+        List<SetterInfo> setters = new();
         PropertyInfo[] properties = type.GetProperties(
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 

@@ -26,7 +26,7 @@ public class InjectServiceAttributeTests
 
     public InjectServiceAttributeTests()
     {
-        ServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new();
         services.AddSingleton<Dependency>(new Dependency("Default"));
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -36,7 +36,7 @@ public class InjectServiceAttributeTests
     [InlineData(false)]
     public void Resolve_Found(bool optional)
     {
-        InjectServiceAttribute injectService = new InjectServiceAttribute() { Optional = optional };
+        InjectServiceAttribute injectService = new() { Optional = optional };
 
         Dependency resolvedDependency = injectService.Resolve(_serviceProvider, typeof(Dependency)) as Dependency;
 
@@ -47,7 +47,7 @@ public class InjectServiceAttributeTests
     [Fact]
     public void Resolve_NotFoundRequired()
     {
-        InjectServiceAttribute injectService = new InjectServiceAttribute();
+        InjectServiceAttribute injectService = new();
 
         Assert.Throws<InvalidOperationException>(() =>
             injectService.Resolve(_serviceProvider, typeof(IComparable)));
@@ -56,7 +56,7 @@ public class InjectServiceAttributeTests
     [Fact]
     public void Resolve_NotFoundOptional()
     {
-        InjectServiceAttribute injectService = new InjectServiceAttribute() { Optional = true };
+        InjectServiceAttribute injectService = new() { Optional = true };
 
         object resolvedDependency = injectService.Resolve(_serviceProvider, typeof(IComparable));
 
