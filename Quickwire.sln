@@ -5,7 +5,11 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quickwire", "src\Quickwire\Quickwire.csproj", "{06940FF4-E185-4C45-9969-E4A4CE3E5F3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quickwire.Tests", "test\Quickwire.Tests\Quickwire.Tests.csproj", "{69C2EBFA-907C-4E00-AA06-5C5A6071BC2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quickwire.Tests", "test\Quickwire.Tests\Quickwire.Tests.csproj", "{69C2EBFA-907C-4E00-AA06-5C5A6071BC2B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{009B1869-1419-48DC-A294-07E3BA07D99B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{ECB11A94-4ECC-4A97-A6CB-350DA2932B76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +28,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{06940FF4-E185-4C45-9969-E4A4CE3E5F3C} = {009B1869-1419-48DC-A294-07E3BA07D99B}
+		{69C2EBFA-907C-4E00-AA06-5C5A6071BC2B} = {ECB11A94-4ECC-4A97-A6CB-350DA2932B76}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9BA2B35B-8231-425A-B07F-D3E0AED71782}
