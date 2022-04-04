@@ -80,6 +80,9 @@ public static class ServiceCollectionExtensions
     {
         switch (mergeStrategy)
         {
+            case ServiceDescriptorMergeStrategy.Add:
+                services.Add(serviceDescriptor);
+                break;
             case ServiceDescriptorMergeStrategy.Replace:
                 services.Replace(serviceDescriptor);
                 break;
