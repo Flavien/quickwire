@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Assembly assembly,
         Func<Type, bool> typeFilter,
-        ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
+        ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Add)
     {
         services.ScanTypes(assembly.GetExportedTypes().Where(typeFilter), mergeStrategy);
 
@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection ScanCurrentAssembly(
         this IServiceCollection services,
-        ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
+        ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Add)
     {
         return services.ScanAssembly(Assembly.GetCallingAssembly(), static _ => true, mergeStrategy);
     }
@@ -45,7 +45,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection ScanTypes(
         this IServiceCollection services,
         IEnumerable<Type> types,
-        ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Replace)
+        ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Add)
     {
         services.TryAddSingleton<IServiceActivator>(new ServiceActivator());
         ServiceProvider serviceProvider = services.BuildServiceProvider();
@@ -80,10 +80,13 @@ public static class ServiceCollectionExtensions
     {
         switch (mergeStrategy)
         {
+            case ServiceDescriptorMergeStrategy.Add:
+                services.Add(serviceDescriptor);
+                break;
             case ServiceDescriptorMergeStrategy.Replace:
                 services.Replace(serviceDescriptor);
                 break;
-            case ServiceDescriptorMergeStrategy.Skip:
+            case ServiceDescriptorMergeStrategy.TryAdd:
                 services.TryAdd(serviceDescriptor);
                 break;
             default:

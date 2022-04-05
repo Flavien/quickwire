@@ -16,7 +16,8 @@ namespace Quickwire;
 
 public enum ServiceDescriptorMergeStrategy
 {
+    Add,
     Replace,
-    Skip,
+    TryAdd,
     Throw
 }

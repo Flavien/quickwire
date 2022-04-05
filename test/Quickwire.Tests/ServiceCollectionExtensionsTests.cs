@@ -74,7 +74,7 @@ public partial class ServiceCollectionExtensionsTests
     [Fact]
     public void ScanTypes_MergeSkip()
     {
-        _services.ScanTypes(new[] { typeof(Merge) }, ServiceDescriptorMergeStrategy.Skip);
+        _services.ScanTypes(new[] { typeof(Merge) }, ServiceDescriptorMergeStrategy.TryAdd);
 
         Assert.Equal(3, _services.Count);
         ServiceDescriptor descriptor = _services.Last();

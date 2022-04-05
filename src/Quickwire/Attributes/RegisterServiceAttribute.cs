@@ -16,11 +16,12 @@ namespace Quickwire.Attributes;
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 /// <summary>
 /// Specifies that a class is a service that can be used for dependency injection.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class RegisterServiceAttribute : Attribute
 {
     public RegisterServiceAttribute(ServiceLifetime scope)
@@ -37,4 +38,52 @@ public class RegisterServiceAttribute : Attribute
     /// The type of the service.
     /// </summary>
     public Type? ServiceType { get; set; }
+}
+
+/// <summary>
+/// Specifies that a class is a IHostedService that will be registered as Singleton in DI container
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public class RegisterBackgroundAttribute : RegisterServiceAttribute
+{
+    public RegisterBackgroundAttribute() : base(ServiceLifetime.Singleton)
+    {
+        ServiceType = typeof(IHostedService);
+    }
+}
+
+/// <summary>
+/// Specifies that a class will be registered as Singleton in DI container.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class RegisterSingletonAttribute : RegisterServiceAttribute
+{
+    public RegisterSingletonAttribute(Type? serviceType = null) : base(ServiceLifetime.Singleton)
+    {
+        ServiceType = serviceType;
+    }
+}
+
+/// <summary>
+/// Specifies that a class will be registered as Scoped in DI container.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class RegisterScopedAttribute : RegisterServiceAttribute
+{
+    public RegisterScopedAttribute(Type? serviceType = null) : base(ServiceLifetime.Scoped)
+    {
+        ServiceType = serviceType;
+    }
+}
+
+/// <summary>
+/// Specifies that a class will be registered as Transient in DI container.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class RegisterTransientAttribute : RegisterServiceAttribute
+{
+    public RegisterTransientAttribute(Type? serviceType = null) : base(ServiceLifetime.Transient)
+    {
+        ServiceType = serviceType;
+    }
 }

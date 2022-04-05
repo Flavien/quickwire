@@ -29,7 +29,7 @@ public static class ServiceScanner
 
         if (!type.IsAbstract && CanScan(type, serviceProvider))
         {
-            foreach (RegisterServiceAttribute registerAttribute in type.GetCustomAttributes<RegisterServiceAttribute>())
+            foreach (RegisterServiceAttribute registerAttribute in type.GetCustomAttributes<RegisterServiceAttribute>(true))
             {
                 Type serviceType = registerAttribute.ServiceType ?? type;
 
