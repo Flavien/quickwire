@@ -25,7 +25,7 @@ public static class ServiceScanner
 {
     public static IEnumerable<Func<ServiceDescriptor>> ScanServiceRegistrations(Type type, IServiceProvider serviceProvider)
     {
-        IServiceActivator serviceActivator = serviceProvider.GetService<IServiceActivator>();
+        IServiceActivator serviceActivator = serviceProvider.GetRequiredService<IServiceActivator>();
 
         if (!type.IsAbstract && CanScan(type, serviceProvider))
         {
@@ -51,7 +51,7 @@ public static class ServiceScanner
     {
         if (CanScan(type, serviceProvider))
         {
-            IServiceActivator serviceActivator = serviceProvider.GetService<IServiceActivator>();
+            IServiceActivator serviceActivator = serviceProvider.GetRequiredService<IServiceActivator>();
 
             foreach (MethodInfo method in type.GetMethods(BindingFlags.Static | BindingFlags.Public))
             {

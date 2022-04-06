@@ -25,7 +25,7 @@ public interface IServiceActivator
     /// <summary>
     /// Returns a factory method based on a static method.
     /// </summary>
-    Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo);
+    Func<IServiceProvider, object> GetFactory(MethodInfo methodInfo);
 
     /// <summary>
     /// Returns a factory method based on a type constructor.

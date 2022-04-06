@@ -20,7 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// Specifies that a method is a factory producing a service that can be used for dependency injection.
 /// </summary>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class RegisterFactoryAttribute : Attribute
 {
     public RegisterFactoryAttribute(ServiceLifetime scope)
