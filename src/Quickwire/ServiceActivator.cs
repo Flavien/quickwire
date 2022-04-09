@@ -26,7 +26,7 @@ using Quickwire.Attributes;
 public class ServiceActivator : IServiceActivator
 {
     /// <inheritdoc />
-    public Func<IServiceProvider, object> GetFactory(MethodInfo methodInfo)
+    public Func<IServiceProvider, object?> GetFactory(MethodInfo methodInfo)
     {
         if (!methodInfo.IsStatic)
             throw new ArgumentException($"The factory method '{methodInfo.Name}' must be static.");
@@ -45,7 +45,8 @@ public class ServiceActivator : IServiceActivator
             for (int i = 0; i < parameters.Length; i++)
                 arguments[i] = Resolve(serviceProvider, parameters[i].ParameterType, dependencyResolvers[i]);
 
-            object result = factory(arguments);
+            object? result = factory(arguments);
+
             return result;
         };
     }
@@ -87,7 +88,7 @@ public class ServiceActivator : IServiceActivator
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         List<ConstructorInfo> primaryConstructor = constructors
-            .Where(constructor => constructor.IsDefined(typeof(ActivatorUtilitiesConstructorAttribute), false))
+            .Where(constructor => constructor.IsDefined(typeof(ServiceConstructorAttribute), false))
             .ToList();
 
         if (primaryConstructor.Count == 1)

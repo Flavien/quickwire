@@ -21,7 +21,7 @@ using Quickwire.Tests.Implementations;
 
 public partial class ServiceScannerTests
 {
-    [RegisterService(ServiceLifetime.Scoped)]
+    [RegisterService]
     public class TypeRegistered { }
 
     public class TypeNotRegistered { }

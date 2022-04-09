@@ -60,6 +60,18 @@ public partial class ServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void ScanTypes_MergeAdd()
+    {
+        _services.ScanTypes(new[] { typeof(Merge) }, ServiceDescriptorMergeStrategy.Add);
+
+        Assert.Equal(4, _services.Count);
+        ServiceDescriptor descriptor = _services.Last();
+        Assert.Equal(typeof(IComparable), descriptor.ServiceType);
+        Assert.Equal(ServiceLifetime.Scoped, descriptor.Lifetime);
+        Assert.Equal(nameof(Merge), descriptor.ImplementationFactory(_serviceProvider));
+    }
+
+    [Fact]
     public void ScanTypes_MergeReplace()
     {
         _services.ScanTypes(new[] { typeof(Merge) }, ServiceDescriptorMergeStrategy.Replace);
@@ -72,7 +84,7 @@ public partial class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void ScanTypes_MergeSkip()
+    public void ScanTypes_MergeTryAdd()
     {
         _services.ScanTypes(new[] { typeof(Merge) }, ServiceDescriptorMergeStrategy.TryAdd);
 

@@ -28,9 +28,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1" />
   </ItemGroup>
 
 </Project>

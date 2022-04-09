@@ -23,7 +23,7 @@ internal class DelegateCompiler
 {
     public delegate void Setter(object? target, object? value);
 
-    public delegate object Factory(object?[] arguments);
+    public delegate object? Factory(object?[] arguments);
 
     public delegate object Constructor(object?[] arguments);
 

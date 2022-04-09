@@ -15,26 +15,11 @@
 namespace Quickwire.Attributes;
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// Specifies that a method is a factory producing a service that can be used for dependency injection.
+/// Specifies which constructor should be used for instantiation when the type is activated for
+/// dependency injection.
 /// </summary>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-public class RegisterFactoryAttribute : Attribute
-{
-    public RegisterFactoryAttribute(ServiceLifetime scope = ServiceLifetime.Scoped)
-    {
-        Scope = scope;
-    }
-
-    /// <summary>
-    /// The lifetime of the service.
-    /// </summary>
-    public ServiceLifetime Scope { get; set; }
-
-    /// <summary>
-    /// The type of the service.
-    /// </summary>
-    public Type? ServiceType { get; set; }
-}
+[AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]
+public class ServiceConstructorAttribute : Attribute
+{ }
