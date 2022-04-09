@@ -63,6 +63,17 @@ public partial class ServiceScannerTests
     }
 
     [Fact]
+    public void ScanServiceRegistrations_InheritedTypeNotRegistered()
+    {
+        List<ServiceDescriptor> result = ServiceScanner
+            .ScanServiceRegistrations(typeof(InheritedTypeNotRegistered), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
+            .ToList();
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
     public void ScanServiceRegistrations_SpecifyServiceType()
     {
         List<ServiceDescriptor> result = ServiceScanner
@@ -144,6 +155,17 @@ public partial class ServiceScannerTests
     {
         List<ServiceDescriptor> result = ServiceScanner
             .ScanFactoryRegistrations(typeof(FactoryNotRegistered), _serviceProvider)
+            .Select(getDescriptor => getDescriptor())
+            .ToList();
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void ScanFactoryRegistrations_InheritedFactoryNotRegistered()
+    {
+        List<ServiceDescriptor> result = ServiceScanner
+            .ScanFactoryRegistrations(typeof(InheritedFactoryNotRegistered), _serviceProvider)
             .Select(getDescriptor => getDescriptor())
             .ToList();
 

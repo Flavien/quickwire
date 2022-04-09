@@ -26,6 +26,8 @@ public partial class ServiceScannerTests
 
     public class TypeNotRegistered { }
 
+    public class InheritedTypeNotRegistered : TypeRegistered { }
+
     [RegisterService(ServiceLifetime.Scoped, ServiceType = typeof(IComparable))]
     public class SpecifyServiceType : IComparable
     {
@@ -57,6 +59,8 @@ public partial class ServiceScannerTests
     {
         public static string Factory1() => "";
     }
+
+    public class InheritedFactoryNotRegistered : FactoryRegistered { }
 
     public class MultipleFactoriesRegistered
     {
