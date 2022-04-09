@@ -23,7 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public class RegisterFactoryAttribute : Attribute
 {
-    public RegisterFactoryAttribute(ServiceLifetime scope)
+    public RegisterFactoryAttribute(ServiceLifetime scope = ServiceLifetime.Scoped)
     {
         Scope = scope;
     }

@@ -31,7 +31,7 @@ public void ConfigureServices(IServiceCollection services)
 3. Decorate services with this attribute in order to register them for dependency injection:
 
 ```csharp
-[RegisterService(ServiceLifetime.Scoped)]
+[RegisterService]
 public class MyService
 {
     // ...
@@ -116,7 +116,7 @@ Constructor parameters, properties and factory parameters can also be decorated 
 Conversion to most basic types, including enumeration types, is supported.
 
 ```csharp
-[RegisterService(ServiceLifetime.Scoped)]
+[RegisterService]
 public class MyService
 {
     [InjectConfiguration("external_api:url")]
