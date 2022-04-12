@@ -47,7 +47,7 @@ public partial class ServiceScannerTests
 
         Assert.Single(result);
         Assert.Equal(typeof(TypeRegistered), result[0].ServiceType);
-        Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
+        Assert.Equal(ServiceLifetime.Transient, result[0].Lifetime);
         Assert.Equal(nameof(TypeRegistered), result[0].ImplementationFactory(_serviceProvider));
     }
 
@@ -146,7 +146,7 @@ public partial class ServiceScannerTests
 
         Assert.Single(result);
         Assert.Equal(typeof(string), result[0].ServiceType);
-        Assert.Equal(ServiceLifetime.Scoped, result[0].Lifetime);
+        Assert.Equal(ServiceLifetime.Transient, result[0].Lifetime);
         Assert.Equal(nameof(FactoryRegistered.Factory1), result[0].ImplementationFactory(_serviceProvider));
     }
 

@@ -51,7 +51,7 @@ public partial class ServiceScannerTests
 
     public class FactoryRegistered
     {
-        [RegisterFactory(ServiceLifetime.Scoped)]
+        [RegisterFactory]
         public static string Factory1() => "";
     }
 

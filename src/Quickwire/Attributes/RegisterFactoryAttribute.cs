@@ -23,7 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public class RegisterFactoryAttribute : Attribute
 {
-    public RegisterFactoryAttribute(ServiceLifetime scope = ServiceLifetime.Scoped)
+    public RegisterFactoryAttribute(ServiceLifetime scope = ServiceLifetime.Transient)
     {
         Scope = scope;
     }
@@ -31,7 +31,7 @@ public class RegisterFactoryAttribute : Attribute
     /// <summary>
     /// The lifetime of the service.
     /// </summary>
-    public ServiceLifetime Scope { get; set; }
+    public ServiceLifetime Scope { get; }
 
     /// <summary>
     /// The type of the service.

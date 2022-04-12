@@ -52,7 +52,7 @@ When applying the `[RegisterService]` attribute to a class, the class will be re
 
 It is also possible to specify the `ServiceType` property on the `[RegisterService]` attribute to register the concrete type under a different service type. The `ServiceType` should be parent type, or interface implemented by the class.
 
-The attribute takes a parameter of type `ServiceLifetime` to specify the lifetime of the service.
+The attribute takes a parameter of type `ServiceLifetime` to specify the lifetime of the service. If left unspecified, the default is `Transient`.
 
 ### Instantiation
 
@@ -101,7 +101,7 @@ By default, all the method parameters will be resolved using dependency injectio
 ```csharp
 public static class LoggingConfiguration
 {
-    [RegisterFactory(ServiceLifetime.Scoped)]
+    [RegisterFactory]
     public static ILogger CreateLogger()
     {
         // ...
@@ -141,7 +141,7 @@ It is possible to disable specific services or service factories using the `[Env
 public class DebugFactories
 {
     // This is only registered in the Development environment
-    [RegisterFactory(ServiceLifetime.Transient)]
+    [RegisterFactory]
     public static ILogger CreateDebugLogger()
     {
         // ...
@@ -160,7 +160,7 @@ It is possible to disable specific services or service factories based on the va
 public class DebugFactories
 {
     // This is only registered if the logging:mode configuration setting is set to "debug"
-    [RegisterFactory(ServiceLifetime.Transient)]
+    [RegisterFactory]
     public static ILogger CreateDebugLogger()
     {
         // ...
@@ -189,11 +189,11 @@ Then decorate controllers as any other service:
 ```csharp
 [ApiController]
 [Route("[controller]")]
-[RegisterService(ServiceLifetime.Transient)]
+[RegisterService]
 public class ShoppingCartController : ControllerBase
 {
     [InjectService]
-    public IShoppingCardRepository { get; init; }
+    public IShoppingCartRepository { get; init; }
 
     // ...
 }
