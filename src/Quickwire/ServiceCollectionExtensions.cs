@@ -47,6 +47,7 @@ public static class ServiceCollectionExtensions
         IEnumerable<Type> types,
         ServiceDescriptorMergeStrategy mergeStrategy = ServiceDescriptorMergeStrategy.Add)
     {
+        services.AddTransient(typeof(Lazy<>), typeof(LazyHandler<>));
         services.TryAddSingleton<IServiceActivator>(new ServiceActivator());
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
